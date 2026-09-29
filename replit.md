@@ -1,6 +1,6 @@
-# [Project name]
+# CareerFlow Riyadh
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+An application-preparation workspace for students searching for Riyadh-only opportunities.
 
 ## Run & Operate
 
@@ -9,7 +9,7 @@ _Replace the heading above with the project's name, and this line with one sente
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- Required services are provisioned through Replit: PostgreSQL, Clerk, App Storage, and Replit AI Integrations.
 
 ## Stack
 
@@ -22,23 +22,30 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- Web UI: `artifacts/careerflow-riyadh/src/`
+- API routes: `artifacts/api-server/src/routes/careerflow.ts`
+- Source adapters: `artifacts/api-server/src/lib/sources.ts`
+- Contract: `lib/api-spec/openapi.yaml`
+- Schema: `lib/db/src/schema/careerflow.ts`
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Opportunity cards are Riyadh-only; remote listings require explicit Saudi/Riyadh eligibility.
+- Demo listings are labeled and never represent active vacancies.
+- Ataba and other unconfigured sources are visibly unavailable until an approved feed/API exists.
+- Applications are drafts; external submission is always done by the user at the original source.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+Users can maintain a profile and multiple private CVs, discover and save opportunities, prepare AI-assisted drafts, and track applications. Public Greenhouse and Lever feeds can be enabled with verified board identifiers.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Never fabricate live vacancies, imply demo opportunities are real, scrape restricted sources, send mail, or submit applications automatically.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- After changing `lib/api-spec/openapi.yaml`, run codegen before consuming hooks or server schemas.
 
 ## Pointers
 

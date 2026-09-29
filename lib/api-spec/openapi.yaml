@@ -1,22 +1,18 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: CareerFlow Riyadh API
 servers:
   - url: /api
-    description: Base API path
 tags:
   - name: health
-    description: Health operations
+  - name: careerflow
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
-      summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +20,519 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /profile:
+    get:
+      operationId: getProfile
+      tags: [careerflow]
+      responses:
+        "200":
+          description: My profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+    put:
+      operationId: updateProfile
+      tags: [careerflow]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileInput"
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+  /dashboard:
+    get:
+      operationId: getDashboard
+      tags: [careerflow]
+      responses:
+        "200":
+          description: Dashboard overview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dashboard"
+  /opportunities:
+    get:
+      operationId: listOpportunities
+      tags: [careerflow]
+      parameters:
+        - name: q
+          in: query
+          schema: { type: string }
+        - name: type
+          in: query
+          schema: { type: string }
+        - name: source
+          in: query
+          schema: { type: string }
+        - name: training
+          in: query
+          schema: { type: boolean }
+        - name: sort
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Riyadh-only opportunities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Opportunity"
+  /opportunities/{id}:
+    get:
+      operationId: getOpportunity
+      tags: [careerflow]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Opportunity detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Opportunity"
+  /sources:
+    get:
+      operationId: listSources
+      tags: [careerflow]
+      responses:
+        "200":
+          description: Source connection status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Source"
+  /saved:
+    get:
+      operationId: listSaved
+      tags: [careerflow]
+      responses:
+        "200":
+          description: Saved opportunities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Opportunity"
+    post:
+      operationId: saveOpportunity
+      tags: [careerflow]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveInput"
+      responses:
+        "200":
+          description: Saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActionResult"
+  /saved/{id}:
+    delete:
+      operationId: removeSaved
+      tags: [careerflow]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Removed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActionResult"
+  /cvs:
+    get:
+      operationId: listCvs
+      tags: [careerflow]
+      responses:
+        "200":
+          description: My CVs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Cv"
+    post:
+      operationId: createCv
+      tags: [careerflow]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CvInput"
+      responses:
+        "201":
+          description: Stored CV
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cv"
+  /cvs/{id}:
+    delete:
+      operationId: deleteCv
+      tags: [careerflow]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActionResult"
+  /cvs/{id}/extract:
+    post:
+      operationId: extractCvProfile
+      tags: [careerflow]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Suggested profile fields for user review, not yet saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfileInput"
+  /cover-template:
+    get:
+      operationId: getCoverTemplate
+      tags: [careerflow]
+      responses:
+        "200":
+          description: My general letter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CoverTemplate"
+    put:
+      operationId: updateCoverTemplate
+      tags: [careerflow]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CoverTemplateInput"
+      responses:
+        "200":
+          description: Saved letter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CoverTemplate"
+  /applications:
+    get:
+      operationId: listApplications
+      tags: [careerflow]
+      responses:
+        "200":
+          description: My applications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Application"
+    post:
+      operationId: createApplication
+      tags: [careerflow]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationInput"
+      responses:
+        "201":
+          description: Draft application
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+  /applications/{id}:
+    patch:
+      operationId: updateApplication
+      tags: [careerflow]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationUpdate"
+      responses:
+        "200":
+          description: Updated application
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+  /prepare:
+    post:
+      operationId: prepareApplication
+      tags: [careerflow]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PrepareInput"
+      responses:
+        "200":
+          description: Editable truthful draft
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PreparedPackage"
+  /storage/uploads/request-url:
+    post:
+      operationId: requestUploadUrl
+      tags: [careerflow]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadInput"
+      responses:
+        "200":
+          description: Private upload target
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadTarget"
 components:
   schemas:
     HealthStatus:
       type: object
+      required: [status]
       properties:
-        status:
-          type: string
-      required:
-        - status
-
+        status: { type: string }
+    ProfileInput:
+      type: object
+      properties:
+        firstName: { type: string }
+        lastName: { type: string }
+        email: { type: string }
+        phone: { type: string }
+        city: { type: string }
+        country: { type: string }
+        nationality: { type: string }
+        linkedin: { type: string }
+        github: { type: string }
+        portfolio: { type: string }
+        website: { type: string }
+        education: { type: array, items: { type: object, additionalProperties: true } }
+        experience: { type: array, items: { type: object, additionalProperties: true } }
+        projects: { type: array, items: { type: object, additionalProperties: true } }
+        skills: { type: array, items: { type: string } }
+        languages: { type: array, items: { type: string } }
+        preferredFields: { type: array, items: { type: string } }
+        preferredTypes: { type: array, items: { type: string } }
+        notificationsEnabled: { type: boolean }
+    Profile:
+      allOf:
+        - $ref: "#/components/schemas/ProfileInput"
+        - type: object
+          required: [city, country, education, experience, projects, skills, languages, preferredFields, preferredTypes, notificationsEnabled]
+          properties:
+            city: { type: string }
+            country: { type: string }
+            education: { type: array, items: { type: object, additionalProperties: true } }
+            experience: { type: array, items: { type: object, additionalProperties: true } }
+            projects: { type: array, items: { type: object, additionalProperties: true } }
+            skills: { type: array, items: { type: string } }
+            languages: { type: array, items: { type: string } }
+            preferredFields: { type: array, items: { type: string } }
+            preferredTypes: { type: array, items: { type: string } }
+            notificationsEnabled: { type: boolean }
+    Opportunity:
+      type: object
+      required: [id, company, title, type, location, description, requirements, skills, source, originalUrl, status, discoveredAt, verifiedAt, isTraining, isDemo, saved, matchScore, matchReasons, gaps, sourceCount]
+      properties:
+        id: { type: integer }
+        company: { type: string }
+        title: { type: string }
+        type: { type: string }
+        location: { type: string }
+        description: { type: string }
+        responsibilities: { type: string }
+        requirements: { type: string }
+        preferredQualifications: { type: string }
+        skills: { type: array, items: { type: string } }
+        field: { type: string }
+        deadline: { type: ["string", "null"] }
+        startDate: { type: ["string", "null"] }
+        endDate: { type: ["string", "null"] }
+        compensation: { type: ["string", "null"] }
+        certificate: { type: ["string", "null"] }
+        source: { type: string }
+        originalUrl: { type: string }
+        applicationUrl: { type: string }
+        applicationMethod: { type: string }
+        status: { type: string }
+        discoveredAt: { type: string }
+        verifiedAt: { type: string }
+        isTraining: { type: boolean }
+        isDemo: { type: boolean }
+        saved: { type: boolean }
+        matchScore: { type: integer }
+        matchReasons: { type: array, items: { type: string } }
+        gaps: { type: array, items: { type: string } }
+        sourceCount: { type: integer }
+    Source:
+      type: object
+      required: [name, status, description]
+      properties:
+        name: { type: string }
+        status: { type: string }
+        description: { type: string }
+    Dashboard:
+      type: object
+      required: [newCount, highMatchCount, savedCount, applicationCount, closingSoonCount, trainingCount, featured]
+      properties:
+        newCount: { type: integer }
+        highMatchCount: { type: integer }
+        savedCount: { type: integer }
+        applicationCount: { type: integer }
+        closingSoonCount: { type: integer }
+        trainingCount: { type: integer }
+        featured:
+          type: array
+          items:
+            $ref: "#/components/schemas/Opportunity"
+    SaveInput:
+      type: object
+      required: [opportunityId]
+      properties:
+        opportunityId: { type: integer }
+    ActionResult:
+      type: object
+      required: [success]
+      properties:
+        success: { type: boolean }
+    CvInput:
+      type: object
+      required: [name, objectPath, fileName, mimeType]
+      properties:
+        name: { type: string, minLength: 1 }
+        objectPath: { type: string, minLength: 1 }
+        fileName: { type: string }
+        mimeType: { type: string }
+    Cv:
+      type: object
+      required: [id, name, objectPath, fileName, mimeType, extractedText, createdAt]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        objectPath: { type: string }
+        fileName: { type: string }
+        mimeType: { type: string }
+        extractedText: { type: string }
+        createdAt: { type: string }
+    CoverTemplateInput:
+      type: object
+      required: [text]
+      properties:
+        text: { type: string }
+    CoverTemplate:
+      type: object
+      required: [text]
+      properties:
+        text: { type: string }
+    ApplicationInput:
+      type: object
+      required: [opportunityId]
+      properties:
+        opportunityId: { type: integer }
+        cvId: { type: ["integer", "null"] }
+        coverLetter: { type: string }
+        answers: { type: array, items: { type: object, additionalProperties: true } }
+        notes: { type: string }
+    ApplicationUpdate:
+      type: object
+      properties:
+        status: { type: string }
+        cvId: { type: ["integer", "null"] }
+        coverLetter: { type: string }
+        answers: { type: array, items: { type: object, additionalProperties: true } }
+        notes: { type: string }
+    Application:
+      type: object
+      required: [id, opportunityId, company, title, status, source, originalUrl, coverLetter, answers, notes, createdAt]
+      properties:
+        id: { type: integer }
+        opportunityId: { type: integer }
+        company: { type: string }
+        title: { type: string }
+        status: { type: string }
+        source: { type: string }
+        originalUrl: { type: string }
+        cvId: { type: ["integer", "null"] }
+        cvName: { type: ["string", "null"] }
+        coverLetter: { type: string }
+        answers: { type: array, items: { type: object, additionalProperties: true } }
+        notes: { type: string }
+        createdAt: { type: string }
+        appliedAt: { type: ["string", "null"] }
+    PrepareInput:
+      type: object
+      required: [opportunityId]
+      properties:
+        opportunityId: { type: integer }
+        cvId: { type: ["integer", "null"] }
+        question: { type: string }
+    PreparedPackage:
+      type: object
+      required: [coverLetter, answer, suggestedCvId, reason]
+      properties:
+        coverLetter: { type: string }
+        answer: { type: string }
+        suggestedCvId: { type: ["integer", "null"] }
+        reason: { type: string }
+    UploadInput:
+      type: object
+      required: [name, size, contentType]
+      properties:
+        name: { type: string }
+        size: { type: integer }
+        contentType: { type: string }
+    UploadTarget:
+      type: object
+      required: [uploadURL, objectPath]
+      properties:
+        uploadURL: { type: string }
+        objectPath: { type: string }

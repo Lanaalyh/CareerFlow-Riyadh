@@ -1,0 +1,1 @@
+- [Boolean query parsing](boolean-query-parsing.md) — generated boolean coercion can treat the string "false" as true; normalize URL query values explicitly.

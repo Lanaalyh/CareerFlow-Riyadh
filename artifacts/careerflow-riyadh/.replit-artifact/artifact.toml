@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "CareerFlow Riyadh"
+description = "A Riyadh-only career application assistant for students, with profile, CVs, verified opportunity discovery, and user-reviewed application preparation."
+version = "1.0.0"
+id = "artifacts/careerflow-riyadh"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24069
+
+[services.development]
+run = "pnpm --filter @workspace/careerflow-riyadh run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/careerflow-riyadh", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/careerflow-riyadh/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24069"
+BASE_PATH = "/"

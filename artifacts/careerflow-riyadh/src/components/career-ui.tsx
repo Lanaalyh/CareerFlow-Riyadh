@@ -1,0 +1,52 @@
+import { type ReactNode, useState } from 'react';
+import { Link, useLocation } from 'wouter';
+import { useClerk, useUser } from '@clerk/react';
+import { ArrowRight, Bookmark, BriefcaseBusiness, Compass, FileText, GraduationCap, LayoutDashboard, LogOut, Menu, Moon, Settings2, Sun, UserRound, X, Sparkles, ExternalLink, MapPin, CheckCircle2 } from 'lucide-react';
+import type { Opportunity } from '@workspace/api-client-react';
+import { getGetDashboardQueryKey, getGetOpportunityQueryKey, getListOpportunitiesQueryKey, getListSavedQueryKey, useRemoveSaved, useSaveOpportunity } from '@workspace/api-client-react';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+
+const links = [
+  {href:'/dashboard',label:'Overview',icon:LayoutDashboard},
+  {href:'/discover',label:'Discover',icon:Compass},
+  {href:'/training',label:'Training',icon:GraduationCap},
+  {href:'/saved',label:'Saved',icon:Bookmark},
+  {href:'/applications',label:'Applications',icon:BriefcaseBusiness},
+  {href:'/cvs',label:'My CVs',icon:FileText},
+  {href:'/cover-letters',label:'Cover letters',icon:Sparkles},
+];
+const personal = [{href:'/profile',label:'My profile',icon:UserRound},{href:'/settings',label:'Settings',icon:Settings2}];
+export function Brand({compact=false}:{compact?:boolean}) {
+  return <Link href="/" className="inline-flex items-center gap-3" data-testid="link-brand"><span className="grid h-10 w-10 place-items-center rounded-[13px] bg-primary text-primary-foreground"><Compass size={21} strokeWidth={2.3}/></span>{!compact&&<span className="display text-[19px] font-bold leading-none">careerflow<span className="text-primary">.</span><small className="mt-1 block font-sans text-[9px] font-bold uppercase tracking-[.23em] text-muted-foreground">RIYADH</small></span>}</Link>;
+}
+export function ThemeToggle() {
+  const [dark,setDark]=useState(()=>typeof document!=='undefined' && document.documentElement.classList.contains('dark'));
+  return <button data-testid="button-theme" aria-label="Toggle color theme" className="btn btn-outline !p-2.5" onClick={()=>{const next=!dark;setDark(next);document.documentElement.classList.toggle('dark',next);localStorage.setItem('cf-theme',next?'dark':'light')}}>{dark?<Sun size={17}/>:<Moon size={17}/>}</button>;
+}
+export function Shell({children,title,subtitle,action}:{children:ReactNode,title:string,subtitle?:string,action?:ReactNode}) {
+  const [location]=useLocation(); const [open,setOpen]=useState(false); const {signOut}=useClerk(); const {user}=useUser();
+  const nav=(items:typeof links)=>items.map(({href,label,icon:Icon})=><Link data-testid={`link-${label.toLowerCase().replaceAll(' ','-')}`} key={href} href={href} onClick={()=>setOpen(false)} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-semibold transition-colors ${location===href?'bg-primary text-primary-foreground':'text-muted-foreground hover:bg-secondary hover:text-foreground'}`}><Icon size={18}/>{label}</Link>);
+  return <div className="min-h-[100dvh] lg:flex">
+    {open&&<button className="fixed inset-0 z-30 bg-foreground/30 lg:hidden" aria-label="Close menu" onClick={()=>setOpen(false)}/>}
+    <aside className={`${open?'translate-x-0':'-translate-x-full'} fixed inset-y-0 left-0 z-40 flex w-[252px] flex-col border-r border-border bg-card px-4 pb-5 pt-7 transition-transform lg:sticky lg:top-0 lg:h-[100dvh] lg:translate-x-0`}>
+      <div className="mb-10 flex items-center justify-between px-3"><Brand/><button onClick={()=>setOpen(false)} className="lg:hidden" aria-label="Close navigation"><X size={20}/></button></div>
+      <div className="mb-3 px-3 eyebrow !text-[9px] !text-muted-foreground">WORKSPACE</div><nav className="space-y-1">{nav(links)}</nav>
+      <div className="mt-8 mb-3 px-3 eyebrow !text-[9px] !text-muted-foreground">ACCOUNT</div><nav className="space-y-1">{nav(personal)}</nav>
+      <div className="mt-auto px-2"><div className="rounded-2xl bg-secondary p-4"><div className="mb-2 flex items-center gap-2 text-primary"><Sparkles size={16}/><span className="eyebrow">A little reminder</span></div><p className="text-xs leading-relaxed text-foreground">Your next step doesn’t need to be perfect. It just needs to be yours.</p></div><button data-testid="button-sign-out" onClick={()=>signOut({redirectUrl:import.meta.env.BASE_URL})} className="mt-4 flex w-full items-center gap-3 px-3 py-2 text-xs font-semibold text-muted-foreground hover:text-foreground"><LogOut size={17}/> Sign out</button></div>
+    </aside>
+    <main className="min-w-0 flex-1"><header className="sticky top-0 z-20 flex h-[72px] items-center justify-between border-b border-border bg-background/95 px-5 backdrop-blur-md md:px-10"><div className="flex items-center gap-4"><button data-testid="button-menu" onClick={()=>setOpen(true)} className="lg:hidden" aria-label="Open menu"><Menu size={22}/></button><span className="mono text-[10px] uppercase tracking-[.13em] text-muted-foreground">YOUR CAREER, IN MOTION</span></div><div className="flex items-center gap-3"><ThemeToggle/><Link href="/profile" data-testid="link-user-profile" className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{user?.firstName?.[0]||user?.primaryEmailAddress?.emailAddress?.[0]?.toUpperCase()||'S'}</Link></div></header>
+      <div className="mx-auto max-w-[1260px] px-5 pb-20 pt-9 md:px-10 md:pt-12"><div className="mb-9 flex flex-wrap items-end justify-between gap-5"><div><div className="eyebrow mb-3">CAREERFLOW / {title.toUpperCase()}</div><h1 className="display text-4xl font-semibold leading-[1.05] md:text-[46px]">{title}</h1>{subtitle&&<p className="mt-3 max-w-xl text-sm text-muted-foreground">{subtitle}</p>}</div>{action}</div>{children}</div>
+    </main>
+  </div>;
+}
+export function Empty({icon:Icon=Compass,title,description,action}:{icon?:typeof Compass,title:string,description:string,action?:ReactNode}) {return <div className="surface flex flex-col items-center px-6 py-16 text-center"><div className="mb-5 grid h-16 w-16 place-items-center rounded-2xl bg-secondary text-primary"><Icon size={27}/></div><h3 className="display text-2xl font-semibold">{title}</h3><p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">{description}</p>{action&&<div className="mt-6">{action}</div>}</div>}
+export function Loading(){return <div className="space-y-4">{[1,2,3].map(i=><div key={i} className="surface h-32 animate-pulse bg-secondary/50"/>)}</div>}
+export function ErrorState({retry}:{retry:()=>void}){return <Empty title="We couldn’t load this right now" description="There may be a temporary connection issue. Your work is safe; try again in a moment." action={<button className="btn btn-primary" onClick={retry}>Try again <ArrowRight size={16}/></button>}/>}
+export function OpportunityCard({item}:{item:Opportunity}) {
+ const queryClient=useQueryClient();const save=useSaveOpportunity();const remove=useRemoveSaved();
+ const toggle=async()=>{try{if(item.saved)await remove.mutateAsync({id:item.id});else await save.mutateAsync({data:{opportunityId:item.id}});await Promise.all([queryClient.invalidateQueries({queryKey:getListSavedQueryKey()}),queryClient.invalidateQueries({queryKey:getListOpportunitiesQueryKey()}),queryClient.invalidateQueries({queryKey:getGetDashboardQueryKey()}),queryClient.invalidateQueries({queryKey:getGetOpportunityQueryKey(item.id)})]);toast.success(item.saved?'Removed from saved':'Saved for later')}catch{toast.error('Could not update saved opportunities')}};
+ return <article data-testid={`card-opportunity-${item.id}`} className="surface group flex flex-col gap-5 p-5 transition-transform duration-200 hover:-translate-y-1 hover:shadow-[0_14px_35px_-26px_hsl(var(--foreground))] md:flex-row md:items-center md:p-6"><div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-secondary text-lg font-bold text-primary">{item.company.slice(0,2).toUpperCase()}</div><div className="min-w-0 flex-1"><div className="mb-2 flex flex-wrap items-center gap-2"><span className="eyebrow !tracking-[.06em]">{item.company}</span>{item.isDemo?<span className="pill !bg-accent/20">Demo · practice-only</span>:<span className="pill">{item.status || 'Status unavailable'}</span>}</div><Link data-testid={`link-opportunity-${item.id}`} href={`/opportunities/${item.id}`} className="display text-xl font-semibold hover:text-primary">{item.title}</Link><div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground"><span className="flex items-center gap-1"><MapPin size={13}/>{item.location}</span><span>{item.type}</span><span>{item.isDemo?'Not a live listing':`Via ${item.source}`}</span></div></div><div className="flex items-center gap-3 self-end md:self-auto"><div className="text-right"><div className="display text-xl font-semibold text-primary">{Math.round(item.matchScore)}%</div><div className="text-[10px] text-muted-foreground">profile match</div></div><button data-testid={`button-save-${item.id}`} aria-label={item.saved?'Remove from saved':'Save opportunity'} disabled={save.isPending||remove.isPending} onClick={toggle} className={`grid h-10 w-10 place-items-center rounded-xl border border-border transition-colors ${item.saved?'bg-primary text-primary-foreground':'hover:bg-secondary'}`}><Bookmark size={17} fill={item.saved?'currentColor':'none'}/></button><Link href={`/opportunities/${item.id}`} aria-label={`View ${item.title}`} className="grid h-10 w-10 place-items-center rounded-xl bg-secondary hover:bg-primary hover:text-primary-foreground"><ArrowRight size={17}/></Link></div></article>
+}
+export function ExternalApplicationNote(){return <div className="flex gap-3 rounded-2xl border border-border bg-secondary/60 p-4 text-xs leading-relaxed text-muted-foreground"><ExternalLink size={17} className="shrink-0 text-primary"/><p>Applications happen on the original source website. CareerFlow never submits or emails on your behalf. After applying there, come back and mark it as applied in your tracker.</p></div>}
+export function SourceBadge({status}:{status:string}){return <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary"><CheckCircle2 size={14}/>{status}</span>}

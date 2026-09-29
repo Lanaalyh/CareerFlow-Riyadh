@@ -1,5 +1,6 @@
 import app from "./app";
 import { logger } from "./lib/logger";
+import { refreshSources } from "./lib/sources";
 
 const rawPort = process.env["PORT"];
 
@@ -22,4 +23,8 @@ app.listen(port, (err) => {
   }
 
   logger.info({ port }, "Server listening");
+  void refreshSources().catch(err => logger.error({ err }, "Opportunity refresh failed"));
+  setInterval(() => {
+    void refreshSources().catch(err => logger.error({ err }, "Opportunity refresh failed"));
+  }, 6 * 60 * 60 * 1000).unref();
 });

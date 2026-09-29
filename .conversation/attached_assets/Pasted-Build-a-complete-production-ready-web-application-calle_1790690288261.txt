@@ -1,0 +1,1651 @@
+Build a complete, production-ready web application called CareerFlow Riyadh.
+
+The application is a smart career and internship assistant designed specifically for university students looking for opportunities ONLY in Riyadh, Saudi Arabia.
+
+The core idea is:
+
+Upload my CV once → enter my information once → find all relevant open opportunities in Riyadh → personalize my CV/cover letter/application → let me review → help me apply.
+
+The application should search beyond LinkedIn and should collect opportunities from multiple legitimate sources, including official company career pages, permitted job platforms, training platforms, and Saudi-focused opportunity platforms.
+
+One important source to support is Ataba (عتبة), which publishes training and career opportunities. Treat Ataba as one of the opportunity sources, not the only source.
+
+Do not depend on LinkedIn.
+
+⸻
+
+1. IMPORTANT LOCATION RULE
+
+This application is specifically for:
+
+Riyadh, Saudi Arabia
+
+Only show opportunities that are:
+
+* Located in Riyadh
+* Riyadh-based
+* Remote opportunities explicitly available to candidates in Riyadh/Saudi Arabia
+
+Do NOT show opportunities that are only in:
+
+* Jeddah
+* Dammam
+* Khobar
+* Dhahran
+* Mecca
+* Medina
+* Other Saudi cities
+* Other countries
+
+unless the opportunity is explicitly remote and available to the user.
+
+The default location filter should always be:
+
+📍 Riyadh
+
+The user should not have to repeatedly select Riyadh.
+
+⸻
+
+2. TYPES OF OPPORTUNITIES
+
+Search for all relevant opportunities including:
+
+University / Student Opportunities
+
+* Cooperative training
+* Co-op
+* Internship
+* Summer internship
+* Internship programs
+* Student training
+* Field training
+* University training
+
+Graduate Opportunities
+
+* Graduate programs
+* Graduate development programs
+* Entry-level jobs
+* New graduate jobs
+* Training programs leading to employment
+
+Other Training Opportunities
+
+* Bootcamps
+* Training programs
+* Professional development programs
+* Career programs
+* Government training programs
+* Company academies
+
+Jobs
+
+* Entry-level
+* Junior
+* Fresh graduate
+
+Allow the user to filter between these categories.
+
+⸻
+
+3. OPPORTUNITY SOURCES
+
+Create a scalable source/adaptor architecture.
+
+Search from multiple sources such as:
+
+Saudi / Local Sources
+
+* Ataba (عتبة)
+* Saudi training and career platforms
+* University career portals where publicly accessible
+* Government career/training portals
+* Saudi company career pages
+
+Company Career Pages
+
+Search official career pages of companies operating in Riyadh.
+
+ATS Platforms
+
+Where publicly accessible and permitted:
+
+* Greenhouse
+* Lever
+* Workday
+* Ashby
+* SmartRecruiters
+* Other legitimate ATS platforms
+
+Other Sources
+
+Use publicly accessible and permitted sources that provide relevant Riyadh opportunities.
+
+IMPORTANT:
+
+Do not illegally scrape websites.
+
+Do not bypass:
+
+* Login systems
+* CAPTCHAs
+* Authentication
+* Anti-bot systems
+* Paywalls
+* Access controls
+
+Respect:
+
+* Terms of service
+* robots.txt
+* API restrictions
+* Rate limits
+
+Whenever possible, use:
+
+* Official APIs
+* Public feeds
+* RSS
+* Public job pages
+* Permitted integrations
+
+If a source cannot technically or legally be integrated, create an adapter interface for it and clearly mark it as unavailable rather than pretending it works.
+
+⸻
+
+4. ATABA INTEGRATION
+
+Add Ataba (عتبة) as a dedicated source.
+
+Create a source badge:
+
+عتبة
+
+When an opportunity comes from Ataba, show:
+
+Source:
+عتبة
+
+and provide:
+
+View Original Opportunity
+
+If Ataba exposes a direct application link, use that link.
+
+Do not copy an opportunity and pretend the application is hosted by CareerFlow.
+
+The user should always be able to open the original opportunity.
+
+⸻
+
+5. USER ONBOARDING
+
+Create a beautiful onboarding process.
+
+Page 1:
+
+Welcome to CareerFlow
+
+“Find opportunities in Riyadh. Prepare your application once. Apply with confidence.”
+
+Button:
+
+Get Started
+
+⸻
+
+6. PERSONAL INFORMATION
+
+Ask the user to enter:
+
+Basic Information
+
+* First name
+* Last name
+* Full name
+* Email
+* Phone number
+* City
+* Country
+* Nationality (optional)
+
+Online Profiles
+
+* LinkedIn
+* GitHub
+* Portfolio
+* Personal website
+
+All optional.
+
+⸻
+
+7. EDUCATION
+
+Allow multiple education records.
+
+Fields:
+
+* University
+* College
+* Major
+* Degree
+* Academic level
+* GPA
+* Expected graduation date
+* Graduation year
+* Training/co-op semester
+* University requirements
+
+⸻
+
+8. EXPERIENCE
+
+Allow multiple entries:
+
+* Company
+* Position
+* Start date
+* End date
+* Description
+* Achievements
+
+⸻
+
+9. PROJECTS
+
+Allow multiple projects:
+
+* Project name
+* Description
+* Technologies
+* Role
+* Project URL
+* GitHub URL
+
+⸻
+
+10. SKILLS
+
+Allow:
+
+Technical Skills
+
+* Programming languages
+* Frameworks
+* Databases
+* Tools
+* Platforms
+* Cloud
+* Cybersecurity
+* Networking
+* AI/ML
+* UI/UX
+
+Soft Skills
+
+* Communication
+* Teamwork
+* Leadership
+* Problem solving
+* Time management
+
+Languages
+
+* Arabic
+* English
+* Other
+
+⸻
+
+11. CV UPLOAD
+
+Create a dedicated:
+
+CV Manager
+
+Allow:
+
+* PDF
+* DOCX
+
+After upload:
+
+1. Extract text.
+2. Parse the CV.
+3. Detect:
+    * Name
+    * Email
+    * Phone
+    * Education
+    * Skills
+    * Experience
+    * Projects
+    * Certifications
+    * Languages
+4. Populate the user’s profile automatically.
+
+Then show:
+
+Review extracted information
+
+The user can edit everything.
+
+Never assume extracted information is correct.
+
+⸻
+
+12. MULTIPLE CVs
+
+Allow the user to store multiple CV versions.
+
+Example:
+
+* Software Engineering CV
+* Cybersecurity CV
+* Data Science CV
+* General CV
+
+For every opportunity, AI should recommend which CV is most relevant.
+
+Example:
+
+Recommended CV
+
+Software Engineering CV
+
+Reason:
+
+“Your SwiftUI and software development projects closely match this opportunity.”
+
+The user can override the recommendation.
+
+⸻
+
+13. COVER LETTER TEMPLATE
+
+Create:
+
+My Cover Letter
+
+The user can:
+
+* Upload an existing cover letter
+* Paste an existing cover letter
+* Write a new template
+
+Support:
+
+* PDF
+* DOCX
+* TXT
+* Plain text
+
+The user should only have to provide the general cover letter once.
+
+⸻
+
+14. AI COVER LETTER PERSONALIZATION
+
+For EVERY opportunity, generate a personalized cover letter.
+
+Do NOT simply replace:
+
+[Company Name]
+
+with the new company.
+
+Actually analyze:
+
+* Company
+* Position
+* Job description
+* Responsibilities
+* Requirements
+* Skills
+* User CV
+* User profile
+* User projects
+* User experience
+
+Then rewrite relevant parts naturally.
+
+The final cover letter should feel like it was written specifically for that company and position.
+
+⸻
+
+15. COVER LETTER RULES
+
+Never invent:
+
+* Experience
+* Skills
+* Projects
+* Certifications
+* Awards
+* Achievements
+* Technologies
+* Relationships with the company
+
+Only use information that exists in the user’s profile/CV.
+
+If the user doesn’t have a requirement, do not pretend they do.
+
+Instead, emphasize genuine transferable skills when appropriate.
+
+⸻
+
+16. PRESERVE USER’S ORIGINAL LETTER
+
+The AI should preserve the user’s:
+
+* Voice
+* Tone
+* Structure
+* Genuine experience
+* Personal story
+
+The system should improve personalization without completely changing the user’s identity.
+
+⸻
+
+17. COVER LETTER QUALITY CHECK
+
+Before showing the final letter, automatically check:
+
+✓ Correct company name
+
+✓ Correct position
+
+✓ Correct location
+
+✓ Correct user’s name
+
+✓ Correct university
+
+✓ Correct major
+
+✓ Correct contact information
+
+✓ No leftover company name from another application
+
+✓ No placeholder text
+
+✓ No invented information
+
+✓ No unsupported claims
+
+✓ No grammar problems
+
+✓ No awkward repetition
+
+If anything is wrong, fix it before presenting the final version.
+
+⸻
+
+18. OPPORTUNITY SEARCH ENGINE
+
+Create a powerful search engine.
+
+Search automatically for:
+
+* New opportunities
+* Recently opened opportunities
+* Still-open opportunities
+* Opportunities with upcoming deadlines
+
+Each opportunity must contain:
+
+* Company
+* Position
+* Type
+* Location
+* Description
+* Requirements
+* Skills
+* Deadline
+* Salary/stipend if available
+* Source
+* Original URL
+* Application method
+* Date discovered
+* Date last verified
+
+⸻
+
+19. OPEN/CLOSED STATUS
+
+Every opportunity must have a status:
+
+🟢 Open
+
+🟡 Closing Soon
+
+🔴 Closed
+
+⚪ Unknown
+
+Never label an opportunity “Open” if the system cannot reasonably verify that it is still accepting applications.
+
+For uncertain listings, say:
+
+Status needs verification
+
+and provide the original source.
+
+⸻
+
+20. DEADLINE SYSTEM
+
+Show deadlines clearly.
+
+Examples:
+
+🔴 Deadline in 2 days
+
+🟠 Deadline in 5 days
+
+🟡 Deadline in 10 days
+
+🟢 Deadline in 30+ days
+
+If there is no known deadline:
+
+Deadline not specified
+
+⸻
+
+21. DUPLICATE DETECTION
+
+The same opportunity may appear on:
+
+* Ataba
+* Company website
+* Another job platform
+* ATS
+
+Detect duplicates.
+
+Use:
+
+* Company
+* Position
+* Location
+* Job ID
+* Application URL
+
+Merge duplicates.
+
+Prefer the official company application page.
+
+Show:
+
+Found on 3 sources
+
+instead of displaying the same opportunity three times.
+
+⸻
+
+22. OPPORTUNITY MATCHING
+
+Create an AI matching system.
+
+Calculate a match percentage based on:
+
+* Major
+* Skills
+* Education
+* Experience
+* Projects
+* Keywords
+* Opportunity type
+* Location
+* Requirements
+
+Example:
+
+91% Match
+
+✓ Computer Science
+
+✓ Swift
+
+✓ SwiftUI
+
+✓ Git
+
+✓ Mobile Development
+
+Potential gap:
+
+○ SQL
+
+Do not hide low-match opportunities.
+
+Allow sorting by:
+
+* Match
+* Newest
+* Deadline
+* Company
+
+⸻
+
+23. USER PREFERENCES
+
+Allow the user to select preferred fields:
+
+* Software Engineering
+* Computer Science
+* Information Systems
+* Cybersecurity
+* Data Science
+* AI
+* IT
+* Networking
+* UX/UI
+* Product
+* Other
+
+And opportunity types:
+
+* Co-op
+* Internship
+* Summer training
+* Graduate program
+* Entry-level
+* Training program
+
+⸻
+
+24. DASHBOARD
+
+Create a beautiful dashboard.
+
+Top:
+
+Good afternoon, [Name] 👋
+
+Then:
+
+New Opportunities
+
+Number
+
+High Match
+
+Number
+
+Saved
+
+Number
+
+Applications
+
+Number
+
+Deadlines Soon
+
+Number
+
+⸻
+
+25. RECOMMENDED OPPORTUNITIES
+
+Show:
+
+Recommended for You
+
+Each card:
+
+⸻
+
+Company
+
+Software Engineering Intern
+
+📍 Riyadh
+
+💼 Cooperative Training
+
+⭐ 94% Match
+
+📅 Deadline: October 15
+
+Source:
+عتبة
+
+Skills:
+Swift · SwiftUI · Git
+
+Buttons:
+
+View Details
+
+Apply
+
+Save
+
+⸻
+
+⸻
+
+26. OPPORTUNITY DETAILS PAGE
+
+When the user opens an opportunity, show:
+
+Company
+
+Position
+
+Location
+
+Type
+
+Deadline
+
+Match percentage
+
+Description
+
+Responsibilities
+
+Requirements
+
+Preferred qualifications
+
+Skills
+
+Why you match
+
+Potential missing requirements
+
+Source
+
+Original application URL
+
+Buttons:
+
+Apply Now
+
+Save
+
+Not Interested
+
+View Original
+
+⸻
+
+27. APPLICATION ASSISTANT
+
+When user clicks:
+
+Apply Now
+
+Determine the application method.
+
+Possible methods:
+
+A. Online application
+
+Open the original application page.
+
+If technically and legally possible, assist the user with filling information.
+
+Map:
+
+First Name → firstName
+
+Last Name → lastName
+
+Email → email
+
+Phone → phone
+
+University → university
+
+Major → major
+
+Graduation Date → graduationDate
+
+LinkedIn → linkedin
+
+GitHub → github
+
+Portfolio → portfolio
+
+CV → selected CV
+
+Cover Letter → personalized cover letter
+
+⸻
+
+28. USER CONFIRMATION
+
+The system must NEVER automatically submit an application.
+
+Flow:
+
+User clicks Apply
+
+↓
+
+System prepares application
+
+↓
+
+System fills/assists with fields
+
+↓
+
+User reviews
+
+↓
+
+User explicitly clicks Submit
+
+↓
+
+Application submitted
+
+This final confirmation is mandatory.
+
+⸻
+
+29. APPLICATION QUESTIONS
+
+If an application asks:
+
+“Why do you want to join us?”
+
+“Why are you a good fit?”
+
+“Tell us about yourself.”
+
+“Why are you interested in this opportunity?”
+
+“Describe a project you worked on.”
+
+Create an AI answer assistant.
+
+The AI should use:
+
+* CV
+* Profile
+* Projects
+* Experience
+* Job description
+
+Generate a truthful answer.
+
+Never invent anything.
+
+Allow:
+
+Generate
+
+Edit
+
+Copy
+
+⸻
+
+30. EMAIL APPLICATIONS
+
+If the company does not have an online form but provides an application email:
+
+Show:
+
+Apply by Email
+
+Generate:
+
+Subject
+
+Application for [Position] — [Name]
+
+Email
+
+Create a personalized professional email.
+
+Attach:
+
+✓ CV
+
+✓ Personalized Cover Letter
+
+The user can edit everything.
+
+⸻
+
+31. EMAIL CONNECTION
+
+Support:
+
+* Gmail
+* Outlook
+
+Use OAuth.
+
+Never ask for or store the user’s email password.
+
+Never send an email automatically.
+
+The user must click:
+
+Send Email
+
+⸻
+
+32. APPLICATION PACKAGE
+
+Before applying, create:
+
+Your Application Package
+
+Company:
+[Company]
+
+Position:
+[Position]
+
+Location:
+Riyadh
+
+Match:
+94%
+
+CV:
+✓ Software Engineering CV
+
+Cover Letter:
+✓ Personalized
+
+Application Answers:
+✓ Prepared
+
+Email:
+✓ Prepared / Not Required
+
+Then:
+
+Review Application
+
+After review:
+
+Continue to Application
+
+⸻
+
+33. APPLICATION TRACKER
+
+Create:
+
+My Applications
+
+Statuses:
+
+* Saved
+* Preparing
+* Ready
+* Applied
+* Interview
+* Assessment
+* Rejected
+* Offer
+* Withdrawn
+
+Show them in a Kanban board.
+
+Each application stores:
+
+* Company
+* Position
+* Date found
+* Date applied
+* CV
+* Cover letter
+* Source
+* Application URL
+* Status
+* Notes
+
+⸻
+
+34. SAVED OPPORTUNITIES
+
+Create:
+
+Saved
+
+Allow users to save opportunities.
+
+Show:
+
+* Deadline
+* Match
+* Company
+* Position
+* Source
+* Status
+
+If an opportunity closes, show:
+
+🔴 Closed
+
+⸻
+
+35. NOTIFICATIONS
+
+Notify the user about:
+
+* New matching opportunity
+* High-match opportunity
+* Deadline approaching
+* Saved opportunity closing
+* Application status update
+
+Allow notification settings.
+
+⸻
+
+36. SEARCH
+
+Create a global search.
+
+Examples:
+
+“Software engineering internship”
+
+“Cybersecurity co-op”
+
+“Data science internship”
+
+“Computer science training”
+
+Default location:
+
+Riyadh
+
+Filters:
+
+* Opportunity type
+* Company
+* Field
+* Match
+* Deadline
+* Source
+* Paid/unpaid
+* Remote
+
+⸻
+
+37. TRAINING SECTION
+
+Add a separate navigation item:
+
+Training 🎓
+
+This section should specifically collect open training opportunities in Riyadh.
+
+Include:
+
+* Training programs
+* Bootcamps
+* Company academies
+* Government programs
+* Workshops
+* Professional training
+* Student programs
+* Graduate training
+
+Sources can include Ataba and other legitimate Saudi training sources.
+
+Each training opportunity should show:
+
+* Organization
+* Training title
+* Type
+* Location
+* Start date
+* End date
+* Application deadline
+* Eligibility
+* Field
+* Cost if applicable
+* Certificate if applicable
+* Source
+* Application link
+
+Add filters:
+
+* Technology
+* Programming
+* AI
+* Cybersecurity
+* Data
+* Business
+* Design
+* Other
+
+Only show Riyadh or explicitly remote opportunities.
+
+⸻
+
+38. ATABA TRAINING SECTION
+
+Add:
+
+Featured on عتبة
+
+This should show selected currently open training opportunities discovered from Ataba.
+
+Each card should display:
+
+عتبة
+
+Training title
+
+Organization
+
+📍 Riyadh
+
+Deadline
+
+Eligibility
+
+View Opportunity
+
+Do not imply that CareerFlow owns these opportunities.
+
+Always link to the original source.
+
+⸻
+
+39. LANDING PAGE
+
+Create a polished landing page.
+
+Headline:
+
+Find your next opportunity in Riyadh.
+
+Subheadline:
+
+One profile. One CV. Personalized applications. Opportunities from across Riyadh — all in one place.
+
+Buttons:
+
+Get Started
+
+Explore Opportunities
+
+Explain:
+
+1. Upload your CV
+
+Upload it once.
+
+2. Complete your profile
+
+Save your information once.
+
+3. Discover opportunities
+
+We search multiple sources, not just LinkedIn.
+
+4. Prepare your application
+
+Your CV, cover letter, and answers are prepared for each opportunity.
+
+5. Review and apply
+
+You always make the final decision.
+
+⸻
+
+40. NAVIGATION
+
+Main navigation:
+
+Dashboard
+
+Discover
+
+Training
+
+Saved
+
+Applications
+
+Cover Letters
+
+CVs
+
+My Profile
+
+Settings
+
+⸻
+
+41. DESIGN
+
+Use a premium modern UI.
+
+Style inspiration:
+
+* Linear
+* Notion
+* modern SaaS dashboards
+* clean career platforms
+
+Use:
+
+* Rounded cards
+* Soft shadows
+* Clean typography
+* Plenty of whitespace
+* Professional colors
+* Responsive design
+* Mobile-first layouts
+
+Support:
+
+Light mode
+
+Dark mode
+
+⸻
+
+42. AUTHENTICATION
+
+Implement:
+
+* Email/password
+* Google login if available
+
+Each user must only access their own:
+
+* Profile
+* CVs
+* Cover letters
+* Applications
+* Saved opportunities
+* Email connection
+
+⸻
+
+43. DATABASE
+
+Use PostgreSQL.
+
+Create models/tables:
+
+User
+
+Profile
+
+Education
+
+Experience
+
+Project
+
+Skill
+
+CV
+
+CoverLetterTemplate
+
+GeneratedCoverLetter
+
+Company
+
+Opportunity
+
+OpportunitySource
+
+SavedOpportunity
+
+Application
+
+ApplicationAnswer
+
+Notification
+
+EmailConnection
+
+SearchPreference
+
+TrainingOpportunity
+
+⸻
+
+44. AI
+
+Use an LLM API through environment variables.
+
+AI should be used for:
+
+* CV parsing
+* Opportunity matching
+* Cover letter personalization
+* Application question generation
+* Email generation
+* CV selection
+* Opportunity summarization
+
+Never hallucinate user information.
+
+⸻
+
+45. SECURITY
+
+Never:
+
+* Store email passwords
+* Expose private CVs
+* Expose one user’s information to another user
+* Automatically submit applications
+* Automatically send emails
+* Bypass website security
+* Bypass CAPTCHA
+* Bypass authentication
+
+Use:
+
+* OAuth
+* Encrypted tokens
+* Secure sessions
+* Server-side authorization
+* Input validation
+* Secure file uploads
+* Rate limiting
+* Environment variables
+
+⸻
+
+46. APPLICATION HISTORY
+
+For every application, save:
+
+Company
+
+Position
+
+Source
+
+Original URL
+
+CV used
+
+Cover letter used
+
+Application answers
+
+Date
+
+Status
+
+Notes
+
+This lets the user know exactly what they submitted.
+
+⸻
+
+47. FINAL APPLICATION CHECK
+
+Before submission:
+
+Ready to Apply?
+
+✓ Correct company
+
+✓ Correct position
+
+✓ Riyadh opportunity
+
+✓ Correct CV
+
+✓ Correct cover letter
+
+✓ Correct name
+
+✓ Correct email
+
+✓ Correct phone
+
+✓ No wrong company name
+
+✓ No placeholder text
+
+✓ No invented experience
+
+✓ Application answers reviewed
+
+Then:
+
+Submit Application
+
+The button must require explicit user interaction.
+
+⸻
+
+48. IMPORTANT — NO FAKE DATA
+
+During development, create realistic demo opportunities so the UI can be tested.
+
+Clearly mark demo data as:
+
+Demo
+
+Do not pretend demo opportunities are real.
+
+Once real integrations are connected, replace demo results with real data.
+
+Never fabricate live job listings.
+
+⸻
+
+49. REPLIT IMPLEMENTATION
+
+Build this as a real full-stack application, not just a visual mockup.
+
+Recommended:
+
+Frontend:
+React + TypeScript
+
+Styling:
+Tailwind CSS
+
+Backend:
+Node.js / Express or Next.js
+
+Database:
+PostgreSQL
+
+Authentication:
+Secure authentication + OAuth
+
+AI:
+LLM API through environment variables
+
+File processing:
+PDF/DOCX text extraction
+
+Email:
+Gmail/Outlook OAuth
+
+⸻
+
+50. ENVIRONMENT VARIABLES
+
+Create a .env.example containing placeholders such as:
+
+DATABASE_URL=
+
+AI_API_KEY=
+
+GOOGLE_CLIENT_ID=
+
+GOOGLE_CLIENT_SECRET=
+
+MICROSOFT_CLIENT_ID=
+
+MICROSOFT_CLIENT_SECRET=
+
+EMAIL_ENCRYPTION_KEY=
+
+Do not hardcode secrets.
+
+⸻
+
+51. SOURCE ADAPTER ARCHITECTURE
+
+Create an interface such as:
+
+OpportunitySourceAdapter
+
+Each source should implement functions such as:
+
+searchOpportunities()
+
+getOpportunityDetails()
+
+checkOpportunityStatus()
+
+getApplicationURL()
+
+Examples:
+
+AtabaAdapter
+
+CompanyCareerAdapter
+
+GreenhouseAdapter
+
+LeverAdapter
+
+WorkdayAdapter
+
+GovernmentTrainingAdapter
+
+This makes it easy to add new sources later.
+
+⸻
+
+52. REFRESH SYSTEM
+
+Create a scheduled background job that periodically refreshes opportunity data.
+
+It should:
+
+* Find new opportunities
+* Update existing opportunities
+* Detect closed opportunities
+* Detect changed deadlines
+* Remove duplicates
+* Recalculate matches
+
+Do not repeatedly scrape sources aggressively.
+
+Respect source limitations and rate limits.
+
+⸻
+
+53. SMART DAILY EXPERIENCE
+
+When the user opens the website, show:
+
+Good afternoon, [Name]
+
+New for you
+
+“12 new opportunities match your profile.”
+
+Closing soon
+
+“3 saved opportunities close this week.”
+
+Recommended
+
+Show the most relevant opportunities.
+
+Training
+
+“5 new training opportunities in Riyadh.”
+
+⸻
+
+54. CORE PRODUCT PHILOSOPHY
+
+The product should NOT feel like another generic job board.
+
+It should feel like:
+
+A personal application assistant for Riyadh students.
+
+The user enters their information once.
+
+CareerFlow handles the repetitive preparation.
+
+The user stays in control.
+
+The ideal flow is:
+
+CV
+↓
+Profile
+↓
+Opportunity discovery
+↓
+Matching
+↓
+CV selection
+↓
+Personalized cover letter
+↓
+Application answers
+↓
+Email preparation if needed
+↓
+Review
+↓
+User submits
+
+⸻
+
+55. FINAL QUALITY REQUIREMENT
+
+Before finishing the Replit implementation:
+
+Test the complete flow:
+
+1. Create account
+2. Enter profile
+3. Upload CV
+4. Parse CV
+5. Review extracted information
+6. Add cover letter template
+7. Search Riyadh opportunities
+8. Filter by internship/co-op
+9. Display Ataba opportunities
+10. Open opportunity
+11. Calculate match
+12. Select CV
+13. Generate personalized cover letter
+14. Check company name
+15. Generate application answers
+16. Prepare email if needed
+17. Review application
+18. Track application
+
+Make sure every major button works.
+
+Do not leave fake buttons that do nothing.
+
+If a real external integration is not configured yet, provide a working mock/demo implementation and clearly identify what needs an API key or OAuth connection.
+
+The final result should look and feel like a polished startup product, not a university demo.
