@@ -1,0 +1,202 @@
+I want to expand the REAL COOP opportunity discovery significantly.
+
+The current live refresh only returned five opportunities. Five is NOT the target. I want the system to search broadly and return as many REAL, currently available opportunities as it can find.
+
+IMPORTANT: Do NOT change the existing website design, UI, profile, CV upload, cover-letter functionality, navigation, or any unrelated feature. Only improve the opportunity discovery/source system.
+
+### 1. SEARCH MANY SOURCES
+
+Do not limit the system to only three employer sources.
+
+Search across:
+
+- Official company career pages
+- Official company COOP/internship pages
+- Public job boards
+- LinkedIn/public job listings where technically permitted
+- Search-engine results
+- Public APIs or feeds where available
+- Other legitimate public sources containing Saudi COOP opportunities
+
+Prioritize official employer sources whenever possible.
+
+### 2. SEARCH MANY SAUDI EMPLOYERS
+
+The system should actively search for COOP opportunities from a LARGE number of Saudi employers, especially employers with operations in Riyadh.
+
+Use well-known Saudi employers as seed sources, including examples such as:
+
+- Saudi Aramco
+- stc
+- SABIC
+- PIF
+- NEOM
+- ROSHN
+- Diriyah Company
+- Red Sea Global
+- Ma'aden
+- Mobily
+- Zain KSA
+- Al Rajhi Bank
+- Al Rajhi Takaful
+- Riyad Bank
+- Saudi National Bank (SNB)
+- Banque Saudi Fransi
+- Saudi Awwal Bank (SAB)
+- Bank Albilad
+- Elm
+- Tamkeen Technologies
+- Tahakom
+- SDAIA
+- Saudi Data & AI Authority related entities
+- Digital Government Authority
+- Ministry-related technology organizations where student training is available
+- Saudi Electricity Company
+- ACWA Power
+- stc subsidiaries
+- Careem
+- HungerStation
+- Jahez
+- Noon
+- Lean Business Services
+- Misk-related organizations
+- Consulting companies
+- Big Four firms
+- Major technology companies operating in Saudi Arabia
+- Major engineering companies
+- Major healthcare companies
+- Major telecommunications companies
+- Major financial institutions
+- Major government-owned companies
+- Major Saudi startups
+
+This is a SEED LIST, not a restriction.
+
+The system must ALSO discover companies dynamically instead of searching only this list.
+
+### 3. DO NOT REQUIRE THE OPPORTUNITY TITLE TO SAY "COOP"
+
+Search for variations such as:
+
+- COOP
+- Co-op
+- Cooperative Training
+- Cooperative Education
+- Internship
+- University Internship
+- Student Internship
+- Training Program
+- University Training
+- Industrial Training
+- Practical Training
+- Internship Program
+- Students Program
+
+Then determine from the description whether the opportunity is actually suitable for a university cooperative-training requirement.
+
+### 4. RETURN MANY RESULTS
+
+Do NOT artificially limit the results to five.
+
+If 10 valid opportunities are found, show 10.
+
+If 30 valid opportunities are found, show 30.
+
+If 100 valid opportunities are found, show 100, subject to reasonable pagination/performance limits.
+
+Use pagination such as:
+20 results per page
+with:
+Next page / Previous page
+
+Do not discard valid opportunities merely because the first five were found.
+
+### 5. RIYADH PRIORITY
+
+Prioritize:
+
+1. Riyadh
+2. Remote opportunities explicitly available to Saudi students
+3. Other Saudi cities only if the user chooses to expand the location filter
+
+Allow the user to change the location filter later.
+
+### 6. REAL-TIME VERIFICATION
+
+Every opportunity must have:
+
+- Company name
+- Position/program name
+- Location
+- Opportunity type
+- Application status
+- Source
+- Original application URL
+- Date discovered
+- Deadline if available
+- Relevant majors if available
+
+Do NOT fabricate any of these fields.
+
+If the source says the application is closed, do not display it as an active opportunity.
+
+For example, several COOP listings that can currently be found online are already marked "No longer accepting applications." The system must detect this rather than presenting them as open opportunities.
+
+### 7. COMPANY SOURCE MONITORING
+
+For important companies, periodically check their official career pages for newly opened COOP/internship opportunities.
+
+The user should not have to manually add every company.
+
+### 8. SEARCH QUALITY
+
+The goal is:
+
+CV + user's major + Riyadh + COOP requirement
+
+→ broad search
+
+→ collect candidate opportunities
+
+→ verify each source
+
+→ filter closed/irrelevant/fake results
+
+→ show ALL remaining valid opportunities.
+
+### 9. DO NOT USE FAKE FALLBACK DATA
+
+If the system cannot retrieve enough real opportunities, NEVER fill the remaining slots with fake/demo opportunities.
+
+Instead say:
+
+"Showing X verified opportunities found from current sources."
+
+### 10. KEEP THE EXISTING APPLICATION WORKFLOW
+
+For every real opportunity, keep the existing Apply workflow.
+
+The Apply button must use the REAL application URL.
+
+Do not claim that an application was submitted unless the external system actually confirms submission.
+
+If CAPTCHA, authentication, mandatory consent, or another human-only step appears, stop and ask the user to complete that step.
+
+### 11. VERY IMPORTANT
+
+Do not rewrite the whole application.
+
+Inspect the current implementation and modify ONLY the opportunity discovery, source aggregation, verification, filtering, and related backend/API logic.
+
+Preserve everything else exactly as it currently works.
+
+After implementing this, test the system and report:
+
+- Number of sources searched
+- Number of companies searched
+- Number of real opportunities found
+- Number of opportunities filtered out
+- Why opportunities were filtered out
+- Number of currently active opportunities
+- Which sources produced the results
+- Whether Apply opens the real application page or actually submits an application

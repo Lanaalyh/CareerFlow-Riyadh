@@ -1,0 +1,94 @@
+### ADD PIF PORTFOLIO COMPANIES AS A MAJOR SOURCE CATEGORY
+
+In addition to the general Saudi employer search, create a dedicated "PIF Portfolio Companies" source category.
+
+The system should use the official Public Investment Fund (PIF) portfolio as a dynamic source of companies to search for COOP and internship opportunities.
+
+IMPORTANT:
+Do NOT assume that every PIF portfolio company currently has an open COOP position.
+
+Instead:
+
+PIF portfolio companies
+→ find official company career page
+→ search current openings
+→ search for COOP / cooperative training / internship / student training
+→ verify the opportunity is currently open
+→ verify location
+→ verify application URL
+→ display only verified active opportunities.
+
+Use the official PIF portfolio as the authoritative starting point and keep the company list updateable because PIF's portfolio can change.
+
+Include, as seed companies where applicable:
+
+- stc
+- SITE
+- TAQNIA
+- HUMAIN
+- Saudi Company for Artificial Intelligence (SCAI)
+- Alat
+- NEOM
+- Red Sea Global
+- ROSHN
+- Qiddiya
+- Diriyah Company
+- New Murabba
+- AlUla Development Company
+- Jeddah Central Development Company
+- Soudah Development
+- King Abdullah Economic City (KAEC)
+- Ardara
+- Rua Al Madinah
+- Albalad Development Company
+- ACWA Power
+- Ma'aden
+- Saudi Electricity Company
+- Saudi Investment Recycling Company (SIRC)
+- Dussur
+- Ceer
+- Lucid
+- Alinma Bank
+- Saudi National Bank (SNB)
+- Saudi Tadawul Group
+- D360 Bank
+- AviLease
+- The Helicopter Company (THC)
+- Saudi Arabian Railways (SAR)
+- SAPTCO
+- Saudi Global Ports Company
+- Riyadh Air
+- Cruise Saudi
+- Sela
+- Savvy Games Group
+- Golf Saudi
+- ASFAR
+- Aseer Investment Company
+- Saudi Coffee Company
+- Al Madinah Heritage Company
+
+IMPORTANT:
+This list is only a seed list and must NOT be treated as the complete PIF portfolio.
+
+The application should dynamically discover additional PIF portfolio companies from the official PIF website and add them to the search pool.
+
+For every company found through PIF:
+
+1. Find its official careers page.
+2. Search for current COOP/internship/student-training opportunities.
+3. Search specifically for Riyadh opportunities.
+4. Verify that the opportunity is currently accepting applications.
+5. Store the original source URL.
+6. Store the actual application URL.
+7. Record the date the opportunity was verified.
+8. Do not show closed or expired opportunities as active.
+9. Do not create fake fallback opportunities.
+
+Add a visible source/category field such as:
+
+Source:
+PIF Portfolio → [Company Name] → Official Careers
+
+This should be one of the major discovery channels alongside general Saudi employer searches, job boards, and other legitimate sources.
+
+Do not change the existing website UI or unrelated functionality.

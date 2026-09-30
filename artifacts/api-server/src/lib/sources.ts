@@ -1,5 +1,5 @@
 import { db, opportunities } from "@workspace/db";
-import { eq } from "drizzle-orm";
+import { eq, and, notInArray } from "drizzle-orm";
 import { logger } from "./logger";
 
 export type IncomingOpportunity = {
@@ -8,6 +8,14 @@ export type IncomingOpportunity = {
   deadline: string | null; source: string; originalUrl: string; applicationMethod: string;
   isTraining: boolean;
 };
+const trainingRole = (title: string) => /\b(co.?op|cooperative|intern(?:ship)?|student.?training)\b/i.test(title);
+const cooperativeRole = (title: string) => /\b(co.?op|cooperative)\b/i.test(title);
+const decodeHtml = (value: string) => value
+  .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"')
+  .replace(/&#(?:x([0-9a-f]+)|([0-9]+));/gi, (_, hex: string, dec: string) => String.fromCodePoint(parseInt(hex || dec, hex ? 16 : 10)))
+  .replace(/&amp;/g, "&").replace(/&nbsp;/g, " ");
+const plainText = (value: string) => decodeHtml(value).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+const deadlineStillOpen = (deadline: string | null) => !deadline || !Number.isFinite(Date.parse(deadline)) || Date.parse(deadline) >= Date.now();
 export interface OpportunitySourceAdapter {
   name: string;
   status: "connected" | "unavailable";
@@ -26,10 +34,10 @@ export { riyadh };
 
 class GreenhouseAdapter implements OpportunitySourceAdapter {
   name = "Greenhouse";
-  status: "connected" | "unavailable" = process.env.GREENHOUSE_BOARD_TOKENS ? "connected" : "unavailable";
-  description = "Public Greenhouse job board feeds; configure verified company board tokens.";
+  status: "connected" | "unavailable" = "connected";
+  description = "Current internships on public employer Greenhouse boards, including Ogilvy MENA.";
   async searchOpportunities(): Promise<IncomingOpportunity[]> {
-    const boards = (process.env.GREENHOUSE_BOARD_TOKENS ?? "").split(",").map(x => x.trim()).filter(Boolean);
+    const boards = [...new Set(["ogilvymena", ...(process.env.GREENHOUSE_BOARD_TOKENS ?? "").split(",").map(x => x.trim()).filter(Boolean)])];
     const results: IncomingOpportunity[] = [];
     for (const board of boards) {
       if (!/^[a-z0-9_-]+$/i.test(board)) continue;
@@ -39,8 +47,8 @@ class GreenhouseAdapter implements OpportunitySourceAdapter {
         const data = await response.json() as { jobs?: Array<{ id: number; title: string; location?: { name?: string }; absolute_url: string; content?: string; departments?: { name: string }[] }> };
         for (const job of data.jobs ?? []) {
           const location = job.location?.name ?? "";
-          if (!riyadh(location)) continue;
-          results.push({ externalId: `greenhouse:${board}:${job.id}`, company: board, title: job.title, type: /intern|co.?op|training/i.test(job.title) ? "Internship" : "Entry-level", location, description: (job.content ?? "").replace(/<[^>]+>/g, " ").slice(0, 12000), requirements: "", skills: [], field: job.departments?.[0]?.name ?? "", deadline: null, source: "Greenhouse", originalUrl: job.absolute_url, applicationMethod: "online", isTraining: /training|bootcamp|academy/i.test(job.title) });
+          if (!riyadh(location) || !trainingRole(job.title)) continue;
+          results.push({ externalId: `greenhouse:${board}:${job.id}`, company: board === "ogilvymena" ? "Ogilvy MENA" : board, title: job.title, type: cooperativeRole(job.title) ? "Co-op" : "Internship", location, description: plainText(job.content ?? "").slice(0, 12000), requirements: "", skills: [], field: job.departments?.[0]?.name ?? "", deadline: null, source: "Greenhouse", originalUrl: job.absolute_url, applicationMethod: "online", isTraining: cooperativeRole(job.title) });
         }
       } catch (err) { logger.warn({ err, board }, "Greenhouse feed unavailable"); }
     }
@@ -52,10 +60,10 @@ class GreenhouseAdapter implements OpportunitySourceAdapter {
 }
 class LeverAdapter implements OpportunitySourceAdapter {
   name = "Lever";
-  status: "connected" | "unavailable" = process.env.LEVER_COMPANIES ? "connected" : "unavailable";
-  description = "Public Lever postings for configured verified employers.";
+  status: "connected" | "unavailable" = "connected";
+  description = "Current internships on public employer Lever boards, including Trendyol.";
   async searchOpportunities(): Promise<IncomingOpportunity[]> {
-    const companies = (process.env.LEVER_COMPANIES ?? "").split(",").map(x => x.trim()).filter(Boolean);
+    const companies = [...new Set(["trendyol", ...(process.env.LEVER_COMPANIES ?? "").split(",").map(x => x.trim()).filter(Boolean)])];
     const results: IncomingOpportunity[] = [];
     for (const company of companies) {
       if (!/^[a-z0-9_-]+$/i.test(company)) continue;
@@ -65,12 +73,73 @@ class LeverAdapter implements OpportunitySourceAdapter {
         const posts = await response.json() as Array<{ id: string; text: string; hostedUrl: string; descriptionPlain?: string; categories?: { location?: string; team?: string; commitment?: string } }>;
         for (const post of posts) {
           const location = post.categories?.location ?? "";
-          if (!riyadh(location)) continue;
-          results.push({ externalId: `lever:${company}:${post.id}`, company, title: post.text, type: post.categories?.commitment ?? "Entry-level", location, description: (post.descriptionPlain ?? "").slice(0, 12000), requirements: "", skills: [], field: post.categories?.team ?? "", deadline: null, source: "Lever", originalUrl: post.hostedUrl, applicationMethod: "online", isTraining: /training|bootcamp|academy/i.test(post.text) });
+          if (!riyadh(location) || !trainingRole(post.text)) continue;
+          results.push({ externalId: `lever:${company}:${post.id}`, company: company === "trendyol" ? "Trendyol" : company, title: post.text, type: cooperativeRole(post.text) ? "Co-op" : "Internship", location, description: (post.descriptionPlain ?? "").slice(0, 12000), requirements: "", skills: [], field: post.categories?.team ?? "", deadline: null, source: "Lever", originalUrl: post.hostedUrl, applicationMethod: "online", isTraining: cooperativeRole(post.text) });
         }
       } catch (err) { logger.warn({ err, company }, "Lever feed unavailable"); }
     }
     return results;
+  }
+  async getOpportunityDetails(id: string) { return (await this.searchOpportunities()).find(x => x.externalId === id) ?? null; }
+  async checkOpportunityStatus(id: string) { return (await this.getOpportunityDetails(id)) ? "Open" as const : "Unknown" as const; }
+  async getApplicationURL(id: string) { return (await this.getOpportunityDetails(id))?.originalUrl ?? null; }
+}
+/**
+ * Public employer sitemap + JobPosting structured data, not an authenticated
+ * applicant endpoint. Only employer hosts whose robots.txt permits these
+ * paths belong in this adapter.
+ */
+class CompanyCareerPagesAdapter implements OpportunitySourceAdapter {
+  name = "Company career pages";
+  status: "connected" | "unavailable" = "connected";
+  description = "Current student roles from permitted public employer career pages (Chalhoub Group). Refreshed regularly.";
+  private readonly hosts = ["careers.chalhoubgroup.com"];
+  async searchOpportunities(): Promise<IncomingOpportunity[]> {
+    const output: IncomingOpportunity[] = [];
+    for (const host of this.hosts) {
+      const sitemap = await fetch(`https://${host}/sitemap.xml`, { signal: AbortSignal.timeout(15000) });
+      if (!sitemap.ok) throw new Error(`Career sitemap ${host}: ${sitemap.status}`);
+      const xml = await sitemap.text();
+      if (xml.length > 3_000_000) throw new Error("Career sitemap exceeds size limit");
+      const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)]
+        .map(match => decodeHtml(match[1]))
+        .filter(url => {
+          try {
+            const parsed = new URL(url);
+            return parsed.protocol === "https:" && parsed.hostname === host && /^\/jobs\/[0-9]+-[a-z0-9-]+$/i.test(parsed.pathname) &&
+              /\b(cooperative|co-op|coop|internship|intern|student-training)\b/i.test(parsed.pathname) &&
+              !/tamheer/i.test(parsed.pathname);
+          } catch { return false; }
+        }).slice(0, 80);
+      // Bounded batches avoid hammering an employer's site.
+      for (let i = 0; i < urls.length; i += 3) {
+        const batch = await Promise.all(urls.slice(i, i + 3).map(async url => {
+          const response = await fetch(url, { signal: AbortSignal.timeout(12000) });
+          if (!response.ok) return null;
+          const html = await response.text();
+          const script = html.match(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/i);
+          if (!script) return null;
+          let posting: Record<string, unknown>;
+          try { posting = JSON.parse(script[1]) as Record<string, unknown>; }
+          catch { return null; }
+          if (posting["@type"] !== "JobPosting") return null;
+          const title = String(posting.title ?? "");
+          const locations = Array.isArray(posting.jobLocation) ? posting.jobLocation : [posting.jobLocation];
+          const location = locations.map((entry: unknown) => {
+            const address = (entry as { address?: { addressLocality?: string; addressCountry?: string } } | null)?.address;
+            return `${address?.addressLocality ?? ""}, ${address?.addressCountry ?? ""}`;
+          }).find(riyadh);
+          const deadline = typeof posting.validThrough === "string" ? posting.validThrough : null;
+          if (!location || !trainingRole(title) || !deadlineStillOpen(deadline)) return null;
+          const description = plainText(String(posting.description ?? "")).slice(0, 12000);
+          if (!description) return null;
+          const company = (posting.hiringOrganization as { name?: string } | undefined)?.name ?? "Chalhoub Group";
+          return { externalId: `career:${host}:${new URL(url).pathname.split("/")[2].split("-")[0]}`, company, title, type: cooperativeRole(title) ? "Co-op" : "Internship", location, description, requirements: "", skills: [], field: "", deadline, source: "Company career pages", originalUrl: url, applicationMethod: "online", isTraining: cooperativeRole(title) } satisfies IncomingOpportunity;
+        }));
+        for (const item of batch) if (item) output.push(item);
+      }
+    }
+    return output;
   }
   async getOpportunityDetails(id: string) { return (await this.searchOpportunities()).find(x => x.externalId === id) ?? null; }
   async checkOpportunityStatus(id: string) { return (await this.getOpportunityDetails(id)) ? "Open" as const : "Unknown" as const; }
@@ -85,22 +154,42 @@ class UnavailableAdapter implements OpportunitySourceAdapter {
   async getApplicationURL(_id: string) { return null; }
 }
 export const sources: OpportunitySourceAdapter[] = [
-  new GreenhouseAdapter(), new LeverAdapter(),
+  new CompanyCareerPagesAdapter(), new GreenhouseAdapter(), new LeverAdapter(),
   new UnavailableAdapter("عتبة", "Ataba has no configured permitted feed or API; listings are not imported."),
   new UnavailableAdapter("Workday", "Requires an approved public feed per company."),
   new UnavailableAdapter("Government training", "Requires an approved public feed or official API."),
-  new UnavailableAdapter("Company career pages", "Requires verified, permitted company feeds."),
 ];
 export async function refreshSources() {
-  for (const source of sources.filter(s => s.status === "connected")) {
-    for (const item of await source.searchOpportunities()) {
+  for (const source of sources.filter(s =>
+    s.name === "Company career pages" ||
+    s.name === "Greenhouse" ||
+    s.name === "Lever")) {
+    let incoming: IncomingOpportunity[];
+    try {
+      incoming = await source.searchOpportunities();
+      source.status = "connected";
+    } catch (err) {
+      source.status = "unavailable";
+      logger.warn({ err, source: source.name }, "Opportunity source refresh failed");
+      continue;
+    }
+    const seen: string[] = [];
+    for (const item of incoming) {
       if (!riyadh(item.location) || !/^https:\/\//.test(item.originalUrl)) continue;
+      seen.push(item.externalId);
       const existing = await db.select().from(opportunities).where(eq(opportunities.externalId, item.externalId)).limit(1);
       if (existing.length) {
         await db.update(opportunities).set({ ...item, status: "Open", verifiedAt: new Date() }).where(eq(opportunities.id, existing[0].id));
       } else {
         await db.insert(opportunities).values({ ...item, status: "Open" });
       }
+    }
+    // A successfully refreshed official sitemap is a complete snapshot.
+    // Remove withdrawn posts from active discovery without deleting saved history.
+    if (source.name === "Company career pages") {
+      await db.update(opportunities).set({ status: "Closed" }).where(
+        seen.length ? and(eq(opportunities.source, source.name), notInArray(opportunities.externalId, seen))! : eq(opportunities.source, source.name),
+      );
     }
   }
 }

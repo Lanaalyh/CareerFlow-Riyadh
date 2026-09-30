@@ -1,0 +1,124 @@
+I want you to MODIFY my existing website, NOT rebuild it and NOT change its existing UI, design, layout, navigation, components, styling, CV upload functionality, profile functionality, or any other functionality that is already working.
+
+Only modify the parts related to COOP opportunity discovery and the application workflow.
+
+CURRENT PROBLEM:
+The Opportunities section currently displays demo/mock opportunities and indicates that the feature is only a demo. I want this changed so the website works with REAL COOP opportunities.
+
+REQUIRED CHANGES:
+
+1. REAL COOP OPPORTUNITY DISCOVERY
+Replace the current hardcoded/demo opportunity data with a real opportunity discovery system.
+
+The system should search for currently available COOP/internship opportunities, particularly in Riyadh, Saudi Arabia.
+
+Use legitimate and technically permitted sources such as:
+- Public company career pages
+- Public internship/COOP pages
+- Search-engine results
+- Job platforms where automated access is permitted
+- Public APIs or feeds where available
+- LinkedIn/public job information where technically and legally permitted
+
+Do NOT invent opportunities.
+
+Every opportunity displayed as real must have a verifiable source/application URL.
+
+2. COMPANY SEARCH
+The system should be able to discover opportunities from companies in Riyadh that are known to offer COOP/internship positions.
+
+Do not use a fixed list of fake companies.
+
+The search should be capable of finding newly opened opportunities as well as opportunities from known companies.
+
+3. OPPORTUNITY FILTERING
+Prioritize opportunities that:
+- Are currently open for applications
+- Are COOP, cooperative training, internship, or equivalent student-training positions
+- Are located in Riyadh or explicitly allow Riyadh placement
+- Match the user's degree/major and skills
+- Have an application link
+- Have a deadline when one is available
+
+Display the source and application link for every opportunity.
+
+4. REMOVE DEMO LABELING
+Do not show the Opportunities page as a demo if real opportunities have successfully been retrieved.
+
+Do not use fake/mock opportunities as if they are real.
+
+If no real opportunities can currently be retrieved, clearly show:
+"No real opportunities found at the moment"
+instead of displaying fake opportunities.
+
+5. PERSONALIZED COVER LETTER
+Keep the existing CV/profile functionality unchanged.
+
+When the user selects an opportunity, use the user's existing CV/profile information to generate a personalized cover letter based specifically on:
+- Company
+- Position
+- Job description
+- Requirements
+- Relevant skills and experience from the user's CV
+
+Do not generate generic letters when the job description is available.
+
+6. APPLICATION WORKFLOW
+Keep the existing Apply functionality, but connect it to the REAL application URL of the selected opportunity.
+
+Where technically permitted, prepare/populate application information using the user's saved profile and CV.
+
+If an external application requires:
+- CAPTCHA
+- Human verification
+- Mandatory consent/attestation
+- Login
+- A question requiring the user's personal confirmation
+- Any other required human action
+
+STOP at that point and clearly tell the user what they need to complete.
+
+Do NOT bypass CAPTCHA, anti-bot systems, authentication, or required consent.
+
+After the user completes the required human step, allow the workflow to continue where technically supported.
+
+7. APPLICATION STATUS
+Never claim that an application was submitted unless the system has actually received a successful submission confirmation from the application website.
+
+Use statuses such as:
+- Ready to Apply
+- Application In Progress
+- Human Action Required
+- Submitted
+- Unable to Submit
+
+8. PRESERVE EVERYTHING ELSE
+This is extremely important.
+
+Do NOT:
+- Redesign the website
+- Change the existing color scheme
+- Change the existing UI
+- Change navigation
+- Remove existing features
+- Change the CV upload system unless required for this feature
+- Change the profile system
+- Change working components unnecessarily
+- Replace the existing architecture unnecessarily
+- Rewrite the entire project
+
+Inspect the existing code first and make the smallest possible changes required to implement the real opportunity discovery and application workflow.
+
+Before modifying files, identify:
+1. Which files currently provide the demo opportunities
+2. Which files control the Opportunities page
+3. Which files control the Apply button
+4. Which files generate the cover letter
+5. Which backend/API routes are involved
+
+Then modify only the necessary files.
+
+IMPORTANT:
+The goal is NOT to bypass security systems. The goal is to replace fake/demo opportunity data with real, verifiable opportunities and make the application workflow functional while keeping the user involved whenever a website requires human verification or consent.
+
+After making the changes, test the existing website to make sure all previously working features still work exactly as before.
