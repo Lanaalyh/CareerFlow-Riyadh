@@ -5,8 +5,14 @@
  * CareerFlow Riyadh API
  * OpenAPI spec version: 0.1.0
  */
+import type { ListOpportunitiesLocation } from './listOpportunitiesLocation';
 
 export type ListOpportunitiesParams = {
+/**
+ * @maxLength 120
+ */
+major?: string;
+location?: ListOpportunitiesLocation;
 q?: string;
 type?: string;
 source?: string;

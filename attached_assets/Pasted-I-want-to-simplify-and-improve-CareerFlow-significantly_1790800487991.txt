@@ -1,0 +1,1054 @@
+I want to simplify and improve CareerFlow significantly.
+
+IMPORTANT:
+Do NOT rebuild the website.
+Do NOT redesign the existing website.
+Do NOT change the existing colors, layout, navigation, profile page, CV upload, CV parsing, cover-letter generation, tracker, authentication, or any unrelated functionality that is already working.
+
+Only modify the opportunity discovery/search/filtering functionality and simplify the Opportunities page where specified below.
+
+==================================================
+MAIN PURPOSE OF CAREERFLOW
+==================================================
+
+The main purpose of CareerFlow is now:
+
+FIND AS MANY REAL, CURRENTLY AVAILABLE COOP OPPORTUNITIES AS POSSIBLE.
+
+The user should be able to:
+
+Enter their major
+→ choose Riyadh
+→ search
+→ CareerFlow searches MANY legitimate sources and employers
+→ finds current COOP/internship/cooperative-training opportunities
+→ verifies them
+→ matches them to the user's major
+→ displays as many relevant opportunities as possible
+→ gives the user the ORIGINAL application/source link
+→ the user applies themselves.
+
+Automatic application submission is NOT required.
+
+The priority is opportunity discovery and coverage.
+
+==================================================
+1. REMOVE THE USER-FACING SOURCE FILTER
+==================================================
+
+The current "All sources" dropdown showing things such as:
+
+- Company career pages
+- Greenhouse
+- Lever
+- Workday
+- Government training
+- other technical source names
+
+looks like an internal technical filter and is not useful to the user.
+
+REMOVE this source dropdown/filter from the visible Opportunities UI.
+
+DO NOT remove the underlying integrations or discovery mechanisms.
+
+Greenhouse, Lever, Workday, company career pages, government training portals, search engines, LinkedIn public discovery, etc. should remain BACKEND discovery sources.
+
+The user should not have to choose where the opportunity comes from.
+
+The user should simply search for opportunities.
+
+==================================================
+2. OPPORTUNITY DISCOVERY
+==================================================
+
+Replace any remaining demo-only discovery behavior with REAL opportunity discovery.
+
+Search broadly across legitimate sources.
+
+Do NOT artificially limit the search to five opportunities.
+
+If there are:
+
+5 valid opportunities → show 5
+20 valid opportunities → show 20
+50 valid opportunities → show 50
+100 valid opportunities → show 100
+
+Use pagination or lazy loading if necessary for performance.
+
+Five must NOT be a hardcoded result limit.
+
+Do not fabricate opportunities.
+
+Do not use demo opportunities as fallback data.
+
+If no real opportunities are found, show exactly:
+
+"No real opportunities found at the moment"
+
+==================================================
+3. SEARCH MANY TYPES OF SOURCES
+==================================================
+
+Use as many legitimate discovery sources as technically possible, including:
+
+- Official company career pages
+- Official company COOP pages
+- Official internship pages
+- Official university/student training pages
+- Greenhouse
+- Lever
+- Workday
+- Government training portals
+- Public job boards
+- Public search-engine results
+- Public APIs or feeds where available
+- Legitimate internship platforms
+- Publicly discoverable LinkedIn opportunities where technically and legally permitted
+- Other legitimate public sources
+
+Prefer the employer's official source and original application URL whenever possible.
+
+Technical source systems such as Greenhouse, Lever, and Workday should remain backend discovery mechanisms, not user-facing filters.
+
+==================================================
+4. SEARCH MANY EMPLOYERS
+==================================================
+
+Search broadly across Saudi companies, especially employers in Riyadh.
+
+Use a LARGE employer pool.
+
+The following companies are SEED SOURCES and must NOT be treated as the complete list.
+
+------------------------------------------
+MAJOR SAUDI EMPLOYERS AND ORGANIZATIONS
+------------------------------------------
+
+Saudi Aramco
+stc
+SABIC
+Saudi Electricity Company
+Ma'aden
+ACWA Power
+Elm
+Tahakom
+SITE
+SAMI
+HUMAIN
+SCAI
+Alat
+Ceer
+Lucid
+Mobily
+Zain KSA
+Riyadh Air
+AviLease
+The Helicopter Company
+Saudi Arabian Railways
+Saudi Global Ports
+Cruise Saudi
+Savvy Games Group
+Sela
+Tamkeen Technologies
+Lean Business Services
+
+------------------------------------------
+PIF-RELATED / PIF PORTFOLIO COMPANIES
+------------------------------------------
+
+PIF
+NEOM
+ROSHN
+Qiddiya
+Diriyah Company
+Red Sea Global
+New Murabba
+AlUla Development Company
+Jeddah Central Development Company
+Soudah Development
+ARDARA
+Rua Al Madinah
+Albalad Development Company
+ACWA Power
+Ma'aden
+Ceer
+Lucid
+Alat
+HUMAIN
+SCAI
+SITE
+Savvy Games Group
+AviLease
+The Helicopter Company
+Riyadh Air
+Cruise Saudi
+Saudi Global Ports
+Saudi Arabian Railways
+Sela
+Saudi Electricity Company
+Dussur
+Saudi Investment Recycling Company (SIRC)
+Saudi Coffee Company
+ASFAR
+Aseer Investment Company
+
+------------------------------------------
+SAUDI BANKS AND FINANCIAL INSTITUTIONS
+------------------------------------------
+
+Al Rajhi Bank
+Saudi National Bank (SNB)
+Riyad Bank
+Alinma Bank
+Bank Albilad
+Saudi Awwal Bank (SAB)
+Banque Saudi Fransi
+Arab National Bank
+GIB Saudi Arabia
+D360 Bank
+Saudi Tadawul Group
+Derayah Financial
+SNB Capital
+Al Rajhi Capital
+
+------------------------------------------
+CONSULTING AND PROFESSIONAL SERVICES
+------------------------------------------
+
+Deloitte
+PwC
+EY
+KPMG
+Accenture
+McKinsey & Company
+Boston Consulting Group (BCG)
+Bain & Company
+Oliver Wyman
+Strategy&
+Arthur D. Little
+Kearney
+Protiviti
+
+------------------------------------------
+TECHNOLOGY AND DIGITAL COMPANIES
+------------------------------------------
+
+Microsoft
+IBM
+Oracle
+SAP
+Amazon
+Google
+Cisco
+Huawei
+Dell Technologies
+Honeywell
+Ericsson
+Schneider Electric
+Siemens
+ST Engineering
+Tenable
+Broadcom
+
+Include international companies ONLY when they have relevant operations, offices, internships, or COOP opportunities in Saudi Arabia.
+
+------------------------------------------
+OTHER MAJOR EMPLOYER CATEGORIES
+------------------------------------------
+
+Search across major companies in:
+
+- Technology
+- Telecommunications
+- Banking
+- Finance
+- Consulting
+- Healthcare
+- Pharmaceuticals
+- Energy
+- Oil & Gas
+- Mining
+- Construction
+- Engineering
+- Real Estate
+- Transportation
+- Aviation
+- Tourism
+- Hospitality
+- Retail
+- E-commerce
+- Logistics
+- Entertainment
+- Media
+- Government-related organizations
+- Government-owned companies
+- Saudi startups
+- Large Saudi private companies
+
+The system should dynamically discover additional Saudi employers beyond this list.
+
+DO NOT rely only on the hardcoded seed list.
+
+The seed list is only a starting point.
+
+==================================================
+5. PIF PORTFOLIO
+==================================================
+
+Use the OFFICIAL Public Investment Fund (PIF) portfolio as a dynamic source of employers.
+
+Do NOT assume that the seed list above represents the complete PIF portfolio.
+
+The system should discover the CURRENT PIF portfolio from official PIF sources and update the employer search pool accordingly.
+
+For every PIF portfolio company discovered:
+
+1. Identify the company.
+2. Find the company's official website.
+3. Find the official careers page.
+4. Search for current COOP opportunities.
+5. Search for cooperative training opportunities.
+6. Search for university internships.
+7. Search for student training programs.
+8. Check whether the opportunity is currently open.
+9. Check whether the opportunity is available in Riyadh.
+10. Check the required majors.
+11. Capture the original source URL.
+12. Capture the original application URL.
+
+IMPORTANT:
+
+Being a PIF portfolio company does NOT mean the company currently has an open COOP position.
+
+Never create an opportunity simply because a company belongs to PIF.
+
+Only display an opportunity when an actual current opening is found and verified.
+
+If a PIF company has no current COOP/internship opportunity, continue searching the next company.
+
+Do not display companies without opportunities as fake results.
+
+==================================================
+6. DYNAMIC EMPLOYER DISCOVERY
+==================================================
+
+The system MUST NOT stop searching after the seed companies listed above.
+
+In addition to the seed list, dynamically discover other Saudi employers by searching:
+
+- Official company career pages
+- Official COOP pages
+- Public job boards
+- Public search results
+- Greenhouse
+- Lever
+- Workday
+- Government training portals
+- Legitimate public internship platforms
+- Publicly discoverable LinkedIn opportunities where technically and legally permitted
+- Other legitimate public sources
+
+When a new employer is discovered:
+
+Company discovered
+→ verify it is a legitimate employer
+→ find its official website
+→ find its careers/application page
+→ search for current COOP/internship opportunities
+→ verify the opportunity
+→ add the opportunity to the results.
+
+The system should continuously expand employer coverage instead of searching only a predefined company list.
+
+==================================================
+7. NO ARTIFICIAL COMPANY OR RESULT LIMIT
+==================================================
+
+Do NOT limit discovery to a fixed number of employers.
+
+Do NOT limit results to five opportunities.
+
+If the system finds:
+
+5 valid opportunities → show 5
+20 valid opportunities → show 20
+50 valid opportunities → show 50
+100 valid opportunities → show 100
+
+Use pagination/lazy loading if necessary for performance.
+
+The goal is to return as many REAL and RELEVANT opportunities as can be verified.
+
+Never add fake opportunities simply to increase the number of results.
+
+==================================================
+8. USER MAJOR INPUT
+==================================================
+
+The user's university major must become one of the MOST IMPORTANT inputs in the opportunity discovery system.
+
+Add a clear field/filter:
+
+"Your Major"
+
+The user should be able to enter their major manually.
+
+Examples:
+
+Computer Science
+Information Systems
+Information Technology
+Software Engineering
+Cybersecurity
+Computer Engineering
+Data Science
+Artificial Intelligence
+Information Systems and Technology
+Business Administration
+Accounting
+Finance
+Marketing
+Human Resources
+Industrial Engineering
+Electrical Engineering
+Mechanical Engineering
+Architecture
+Graphic Design
+
+and other majors.
+
+The field must also accept custom majors that are not in a predefined list.
+
+Do NOT restrict the user to predefined majors.
+
+==================================================
+9. MAJOR-BASED SEARCH
+==================================================
+
+The goal is NOT simply to find COOP opportunities in Riyadh.
+
+The goal is:
+
+USER MAJOR
+→ SEARCH RELEVANT COOP OPPORTUNITIES
+→ VERIFY REQUIREMENTS
+→ SHOW RELEVANT OPPORTUNITIES.
+
+Use the user's major when searching and filtering opportunities.
+
+For every opportunity, analyze:
+
+- Job title
+- Job description
+- Required major
+- Preferred major
+- Required degree
+- Required skills
+- Department
+- Internship/COOP description
+
+Then determine whether it is relevant to the user's major.
+
+==================================================
+10. MAJOR MATCHING
+==================================================
+
+Show a simple relevance indicator:
+
+Major Match: High
+Major Match: Medium
+Major Match: Low
+
+Prioritize opportunities where the employer explicitly accepts the user's major.
+
+Examples:
+
+If the user enters:
+
+Computer Science
+
+Search for:
+
+Computer Science
+Software Engineering
+Information Technology
+Computer Engineering
+Data Science
+Artificial Intelligence
+Cybersecurity
+Programming
+Software Development
+Cloud
+Networks
+Databases
+Machine Learning
+Data Analytics
+
+and other closely related fields.
+
+However, do NOT automatically assume every technical opportunity is suitable.
+
+Use the actual employer requirements whenever available.
+
+If the employer explicitly says:
+
+"Computer Science students only"
+
+and the user's major is Computer Science:
+
+→ High match.
+
+If the employer says:
+
+"Business, Finance, Accounting or related majors"
+
+and the user's major is Computer Science:
+
+→ Low match or exclude from default results.
+
+If the employer says:
+
+"All majors"
+
+→ Include it.
+
+If requirements are unclear:
+
+→ Include it but mark:
+
+"Requirements unclear"
+
+==================================================
+11. SEARCH USING THE USER'S MAJOR
+==================================================
+
+Generate search queries dynamically based on the user's major.
+
+Examples:
+
+"Computer Science COOP Riyadh"
+
+"Computer Science cooperative training Riyadh"
+
+"Computer Science internship Riyadh"
+
+"Software Engineering COOP Riyadh"
+
+"Information Systems COOP Riyadh"
+
+"Information Technology internship Riyadh"
+
+etc.
+
+Do not search only for the exact phrase "COOP".
+
+==================================================
+12. COOP / INTERNSHIP SEARCH TERMS
+==================================================
+
+Search using multiple variations:
+
+COOP
+Co-op
+Cooperative Training
+Cooperative Education
+Cooperative Internship
+University Internship
+Student Internship
+Internship Program
+University Training
+Student Training
+Industrial Training
+Practical Training
+Student Placement
+Training Program
+University Cooperative Training
+Cooperative Education Program
+
+Also inspect job descriptions because some companies may not include "COOP" in the job title.
+
+==================================================
+13. LINKEDIN DISCOVERY
+==================================================
+
+Include LinkedIn as an important discovery source for publicly discoverable opportunities and hiring announcements.
+
+Search for publicly available LinkedIn job listings and public company/recruiter posts where technically and legally permitted.
+
+Search for terms such as:
+
+COOP
+Co-op
+Cooperative Training
+Internship
+University Internship
+Student Training
+Cooperative Education
+Training Opportunity
+Hiring COOP Students
+COOP Opportunity
+Open for COOP
+Co-op Training
+
+Combine these searches with:
+
+- Riyadh
+- Saudi Arabia
+- The user's major
+- Related major keywords
+- Company names
+
+IMPORTANT:
+
+Do NOT scrape LinkedIn.
+
+Do NOT bypass LinkedIn login.
+
+Do NOT use bots to access LinkedIn.
+
+Do NOT automate LinkedIn account activity.
+
+Do NOT bypass LinkedIn restrictions.
+
+Use only technically and legally permitted public information or official/authorized integrations.
+
+When a LinkedIn opportunity is discovered, preserve the original LinkedIn URL.
+
+If the LinkedIn post directs applicants to the company's official careers page, prefer the company's original application URL.
+
+==================================================
+14. LINKEDIN POSTS
+==================================================
+
+Do not search only LinkedIn formal job listings.
+
+Where permitted, discover publicly available hiring announcements/posts such as:
+
+"We are looking for COOP students..."
+"COOP opportunity in Riyadh..."
+"Applications are now open..."
+"We are hiring interns..."
+"Cooperative training opportunity..."
+
+These posts can be useful because companies sometimes announce COOP openings through company pages or recruiters.
+
+Again, only use publicly accessible/authorized information.
+
+==================================================
+15. COMPANY DISCOVERY FROM LINKEDIN
+==================================================
+
+If a legitimate public LinkedIn post reveals a Saudi company offering a COOP opportunity:
+
+→ identify the company
+→ find the company's official website
+→ find the official careers/application page
+→ verify whether the opportunity is still open
+→ show the official application link whenever available.
+
+LinkedIn should function primarily as a DISCOVERY CHANNEL.
+
+==================================================
+16. RIYADH PRIORITY
+==================================================
+
+Prioritize opportunities in:
+
+1. Riyadh
+2. Remote opportunities explicitly available to Saudi students
+3. Other Saudi cities only when the user chooses to expand the location filter
+
+For every opportunity, determine the actual location from the source.
+
+Do not label an opportunity as Riyadh unless the source supports it.
+
+Allow the user to change the location later.
+
+==================================================
+17. OPPORTUNITY VERIFICATION
+==================================================
+
+Every displayed opportunity must be verified as a real opportunity.
+
+For every opportunity, collect where available:
+
+- Company
+- Position/program name
+- Location
+- Opportunity type
+- Short description
+- Required major
+- Required skills
+- Deadline
+- Source
+- Original application URL
+- Date discovered/verified
+
+Do NOT fabricate any field.
+
+If the source says the opportunity is closed or expired, do not display it as active.
+
+If the opportunity cannot be verified, do not display it as a verified active opportunity.
+
+==================================================
+18. EVERY RESULT MUST HAVE A REAL LINK
+==================================================
+
+Each opportunity card must have:
+
+Company
+Position/program
+Location
+Opportunity type
+Major match
+Deadline if available
+Short description
+Source
+Original application link
+
+The main action should be:
+
+[ Apply ]
+
+or:
+
+[ View Opportunity ]
+
+Clicking it should open the ORIGINAL application/source URL.
+
+The user will complete the application themselves.
+
+==================================================
+19. NO AUTOMATIC APPLICATION SUBMISSION
+==================================================
+
+Automatic application submission is NOT required.
+
+Do NOT attempt to:
+
+- Submit applications
+- Bypass CAPTCHA
+- Bypass login
+- Bypass human verification
+- Bypass consent
+- Automate external application submission
+- Bypass employer security controls
+
+The user will apply manually.
+
+The purpose of CareerFlow is to save the user time by finding and organizing the opportunities.
+
+==================================================
+20. COVER LETTER
+==================================================
+
+Keep the existing cover-letter functionality.
+
+When the user selects an opportunity, generate a personalized cover letter using:
+
+- User profile
+- CV
+- Major
+- Company
+- Position
+- Job description
+- Requirements
+- Relevant skills and experience
+
+Do not generate a generic cover letter when the job description is available.
+
+Do not change the existing cover-letter UI unless necessary.
+
+==================================================
+21. CV AND PROFILE
+==================================================
+
+Keep all existing CV/profile functionality.
+
+Do NOT remove:
+
+- CV upload
+- CV parsing
+- Profile
+- Saved information
+- Cover-letter generation
+- Existing tracker
+- Authentication
+
+The CV and profile can be used for:
+
+- Major matching
+- Skill matching
+- Opportunity relevance
+- Personalized cover letters
+
+==================================================
+22. OPPORTUNITY PAGE UI
+==================================================
+
+Keep the existing design and layout as much as possible.
+
+Simplify the Opportunities page so the user primarily sees:
+
+Your Major
+[ Computer Science ]
+
+Location
+[ Riyadh ]
+
+Opportunity Type
+[ COOP / Internship / All ]
+
+[ Search ]
+
+Then:
+
+Company Name
+Position / Program
+📍 Riyadh
+🎓 Major Match: High
+📅 Deadline: if available
+Source: if useful
+[ Apply ]
+
+Do NOT expose technical discovery systems such as:
+
+Greenhouse
+Lever
+Workday
+
+as primary user-facing filters.
+
+Those are backend sources.
+
+==================================================
+23. FILTERS
+==================================================
+
+The useful user-facing filters should be things such as:
+
+- Major
+- Location
+- Opportunity type
+- Active/Open opportunities
+- Major match
+- Deadline
+- Company (optional)
+
+Do NOT make the technical source system a required filter.
+
+==================================================
+24. DUPLICATE HANDLING
+==================================================
+
+The same opportunity may appear on multiple sources.
+
+Deduplicate opportunities using factors such as:
+
+- Company
+- Position title
+- Location
+- Application URL
+- Job ID
+- Matching description
+
+If the same opportunity appears on LinkedIn and the company's careers page:
+
+Prefer the official company application URL.
+
+You may still record LinkedIn as an additional discovery source internally.
+
+Do not show the same opportunity multiple times just because it appeared on multiple sources.
+
+==================================================
+25. CLOSED / EXPIRED OPPORTUNITIES
+==================================================
+
+Do not show closed opportunities as active.
+
+If an opportunity is:
+
+- Expired
+- Closed
+- No longer accepting applications
+- Removed
+- Filled
+- Clearly outdated
+
+remove it from active discovery results.
+
+Do not use expired opportunities to make the result list look larger.
+
+==================================================
+26. NO DEMO FALLBACK
+==================================================
+
+Demo records may remain stored internally if necessary for development/testing.
+
+However:
+
+Demo records MUST NEVER appear in the real Opportunities discovery results.
+
+Never mix demo opportunities with real opportunities.
+
+If there are only 3 real opportunities, show 3.
+
+If there are 50 real opportunities, show 50.
+
+If there are no real opportunities, show:
+
+"No real opportunities found at the moment"
+
+==================================================
+27. NO FALSE CLAIMS
+==================================================
+
+Do not claim:
+
+"Applied"
+
+unless the user themselves reports that they applied.
+
+Do not claim:
+
+"Application submitted"
+
+unless there is a legitimate supported integration and verifiable confirmation.
+
+The system should only provide:
+
+- Opportunity discovered
+- Opportunity verified
+- Application link available
+- User can apply
+
+==================================================
+28. PERFORMANCE
+==================================================
+
+Because the system will search many employers and sources, use pagination, caching, deduplication, and reasonable request limits where necessary.
+
+Do not make the user wait unnecessarily for every source sequentially if parallel/efficient discovery is technically possible.
+
+However, correctness is more important than showing unverified results quickly.
+
+==================================================
+29. DO NOT REBUILD THE WEBSITE
+==================================================
+
+This is extremely important.
+
+Inspect the current implementation first.
+
+Modify ONLY what is necessary for:
+
+- Opportunity discovery
+- Employer discovery
+- PIF employer discovery
+- Major-based search
+- LinkedIn public/authorized discovery
+- Opportunity verification
+- Filtering
+- Deduplication
+- Opportunity result display
+- Application/source links
+
+Do NOT:
+
+- Redesign the website
+- Change the color scheme
+- Change navigation
+- Remove existing features
+- Rewrite the entire application
+- Replace working components unnecessarily
+- Change unrelated pages
+- Break existing functionality
+
+==================================================
+30. TESTING AFTER IMPLEMENTATION
+==================================================
+
+After implementing the changes, test the complete discovery workflow.
+
+Report:
+
+- Number of discovery sources used
+- Number of employers searched
+- Number of PIF portfolio companies searched
+- Number of dynamically discovered employers
+- Number of real active opportunities found
+- Number of Riyadh opportunities
+- Number of opportunities matching the user's major
+- Number of high/medium/low major matches
+- Number of opportunities removed because they were expired/closed
+- Number of duplicate opportunities removed
+- Number of unique companies represented
+- Sources that produced results
+- Number of LinkedIn discoveries, if available
+- Confirm that five is NOT a hardcoded result limit
+- Confirm that demo records do NOT appear in real discovery
+- Confirm that every displayed opportunity has a real source/application URL
+- Confirm that the Apply button opens the original application page
+
+==================================================
+FINAL PRODUCT GOAL
+==================================================
+
+The final CareerFlow workflow should be:
+
+USER ENTERS MAJOR
+↓
+USER CHOOSES RIYADH
+↓
+USER CLICKS SEARCH
+↓
+CAREERFLOW SEARCHES MANY LEGITIMATE SOURCES
+↓
+SEARCHES MANY SAUDI EMPLOYERS
+↓
+SEARCHES PIF PORTFOLIO COMPANIES
+↓
+DISCOVERS ADDITIONAL EMPLOYERS DYNAMICALLY
+↓
+SEARCHES PUBLIC/AUTHORIZED LINKEDIN OPPORTUNITIES
+↓
+SEARCHES COOP / INTERNSHIP / TRAINING TERMS
+↓
+VERIFIES CURRENT OPENINGS
+↓
+CHECKS LOCATION
+↓
+CHECKS MAJOR REQUIREMENTS
+↓
+DEDUPLICATES RESULTS
+↓
+SHOWS AS MANY REAL RELEVANT OPPORTUNITIES AS AVAILABLE
+↓
+USER CLICKS APPLY
+↓
+ORIGINAL APPLICATION PAGE OPENS
+↓
+USER APPLIES THEMSELVES
+
+The core objective is:
+
+FIND AS MANY REAL, CURRENT, RELEVANT COOP OPPORTUNITIES AS POSSIBLE.
+
+Do not optimize for automatic application submission.
+
+Optimize for:
+
+BROAD DISCOVERY
++
+REAL VERIFIED OPPORTUNITIES
++
+MAJOR RELEVANCE
++
+RIYADH
++
+MANY EMPLOYERS
++
+MANY SOURCES
++
+ORIGINAL APPLICATION LINKS

@@ -14,7 +14,8 @@ import {
 } from "@workspace/api-zod";
 import { openai } from "@workspace/integrations-openai-ai-server";
 import { ObjectStorageService, ObjectNotFoundError } from "../lib/objectStorage";
-import { riyadh, sources } from "../lib/sources";
+import { matchesLocation, refreshSources, saudiLocation, sources } from "../lib/sources";
+import { matchMajor } from "../lib/major-match";
 
 const router: IRouter = Router();
 const storage = new ObjectStorageService();
@@ -33,7 +34,11 @@ async function savedIds(userId: string) {
   const rows = await db.select({ opportunityId: savedOpportunities.opportunityId }).from(savedOpportunities).where(eq(savedOpportunities.userId, userId));
   return new Set(rows.map(x => x.opportunityId));
 }
-function scored(opp: typeof opportunities.$inferSelect, p: ProfileData, saved: Set<number>) {
+function profileMajor(p: ProfileData) {
+  const entries = Array.isArray(p.education) ? p.education : [];
+  return entries.map((entry: unknown) => (entry as { field?: unknown } | null)?.field).find((field): field is string => typeof field === "string" && !!field.trim()) ?? "";
+}
+function scored(opp: typeof opportunities.$inferSelect, p: ProfileData, saved: Set<number>, major: string) {
   const corpus = [p.preferredFields, p.skills, p.education, p.projects, p.experience].flatMap(v => Array.isArray(v) ? v.map(x => typeof x === "string" ? x : JSON.stringify(x)) : []).join(" ").toLowerCase();
   const listing = `${opp.title} ${opp.field} ${opp.description} ${opp.requirements}`.toLowerCase();
   const personalSkills = Array.isArray(p.skills) ? p.skills.filter((x): x is string => typeof x === "string") : [];
@@ -47,24 +52,48 @@ function scored(opp: typeof opportunities.$inferSelect, p: ProfileData, saved: S
     return typeof field === "string" && field.length > 2 ? [field] : [];
   }) : [];
   const relevantMajors = educationFields.filter(x => listing.includes(x.toLowerCase()));
-  const score = corpus ? Math.min(90, matchedProfileSkills.length * 15 + relevantFields.length * 12 + relevantMajors.length * 30 + matched.length * 10) : 0;
+  const majorResult = matchMajor(major, opp);
+  const profileScore = corpus ? matchedProfileSkills.length * 15 + relevantFields.length * 12 + relevantMajors.length * 30 + matched.length * 10 : 0;
+  const majorWeight = major ? ({ High: 65, Medium: 38, Unclear: 12, Low: 0 }[majorResult.level]) : 0;
+  const score = Math.min(95, Math.round(profileScore + majorWeight));
   return {
     ...opp,
     deadline: opp.deadline, originalUrl: opp.originalUrl, applicationUrl: opp.originalUrl,
     discoveredAt: opp.discoveredAt.toISOString(), verifiedAt: opp.verifiedAt.toISOString(),
     status: opp.isDemo ? "Unknown" : opp.deadline && opp.deadline < new Date().toISOString().slice(0, 10) ? "Closed" : Date.now() - opp.verifiedAt.getTime() > 48 * 60 * 60 * 1000 ? "Unknown" : opp.status,
-    saved: saved.has(opp.id), matchScore: score,
+    saved: saved.has(opp.id), matchScore: score, majorMatch: majorResult.level, majorMatchReason: majorResult.reason,
     matchReasons: [...matchedProfileSkills, ...relevantFields, ...relevantMajors, ...matched].filter((x, i, all) => all.indexOf(x) === i).slice(0, 4).map(x => `Your profile mentions ${x}, which appears in this listing`), gaps,
   };
 }
-async function list(userId: string) {
+async function list(userId: string, requestedMajor?: string) {
   const [p, saved] = await Promise.all([profile(userId), savedIds(userId)]);
-  const rows = await db.select().from(opportunities).orderBy(desc(opportunities.discoveredAt)).limit(300);
-  return rows.filter(x => !x.isDemo && riyadh(x.location)).map(x => scored(x, p, saved));
+  const rows = await db.select().from(opportunities).orderBy(desc(opportunities.discoveredAt));
+  const major = requestedMajor === undefined ? profileMajor(p) : requestedMajor.trim();
+  return rows.filter(x => !x.isDemo && saudiLocation(x.location)).map(x => scored(x, p, saved, major));
+}
+type ScoredOpportunity = Awaited<ReturnType<typeof list>>[number];
+function deduplicate(rows: ScoredOpportunity[]) {
+  const seenUrls = new Set<string>();
+  const seenDescriptions = new Set<string>();
+  // Prefer employer-owned pages, then an ATS application link. Existing rows
+  // remain stored so a user's saved application history is never deleted.
+  const ordered = [...rows].sort((a, b) =>
+    Number(b.source === "Company career pages") - Number(a.source === "Company career pages") ||
+    b.verifiedAt.localeCompare(a.verifiedAt));
+  const result: ScoredOpportunity[] = [];
+  for (const row of ordered) {
+    const urlKey = row.originalUrl.replace(/[?#].*$/, "").replace(/\/$/, "").toLowerCase();
+    const descriptionKey = `${row.company}|${row.title}|${row.location}|${row.description.slice(0, 180)}`.toLowerCase().replace(/\s+/g, " ");
+    if (seenUrls.has(urlKey) || seenDescriptions.has(descriptionKey)) continue;
+    seenUrls.add(urlKey);
+    seenDescriptions.add(descriptionKey);
+    result.push(row);
+  }
+  return result;
 }
 const currentlyOpen = (item: Awaited<ReturnType<typeof list>>[number]) =>
   item.status === "Open" && Date.now() - new Date(item.verifiedAt).getTime() < 24 * 60 * 60 * 1000 &&
-  (!item.deadline || Number.isNaN(Date.parse(item.deadline)) || Date.parse(item.deadline) >= Date.now()) &&
+  (!item.deadline || (Number.isFinite(Date.parse(item.deadline)) && Date.parse(item.deadline) >= Date.now())) &&
   /^https:\/\//.test(item.originalUrl);
 router.get("/profile", async (req, res): Promise<void> => {
   res.json(GetProfileResponse.parse(await profile(who(req)!)));
@@ -87,16 +116,19 @@ router.get("/opportunities", async (req, res): Promise<void> => {
   }
   const parsed = ListOpportunitiesQueryParams.safeParse({ ...req.query, training: undefined });
   if (!parsed.success) { res.status(400).json({ error: parsed.error.message }); return; }
-  const { q, type, source, sort } = parsed.data;
+  await refreshSources();
+  const { q, type, source, sort, major, location } = parsed.data;
   const training = rawTraining === undefined ? undefined : rawTraining === "true";
-  let rows = (await list(who(req)!)).filter(currentlyOpen);
+  let rows = deduplicate((await list(who(req)!, major)).filter(currentlyOpen).filter(x => matchesLocation(x.location, location ?? "riyadh")));
   if (q) rows = rows.filter(x => `${x.company} ${x.title} ${x.description} ${x.skills.join(" ")}`.toLowerCase().includes(q.toLowerCase()));
   if (type) rows = rows.filter(x => x.type.toLowerCase().includes(type.toLowerCase()));
   if (source) rows = rows.filter(x => x.source.toLowerCase() === source.toLowerCase());
   if (training !== undefined) rows = rows.filter(x => x.isTraining === training);
-  if (sort === "match") rows.sort((a,b) => b.matchScore - a.matchScore);
+  const rank = { High: 3, Medium: 2, Unclear: 1, Low: 0 };
+  if (sort === "match") rows.sort((a,b) => rank[b.majorMatch] - rank[a.majorMatch] || b.matchScore - a.matchScore);
   if (sort === "deadline") rows.sort((a,b) => (a.deadline ?? "9999").localeCompare(b.deadline ?? "9999"));
   if (sort === "company") rows.sort((a,b) => a.company.localeCompare(b.company));
+  if (!sort || sort === "newest") rows.sort((a,b) => sort === "newest" ? b.discoveredAt.localeCompare(a.discoveredAt) : rank[b.majorMatch] - rank[a.majorMatch] || b.matchScore - a.matchScore || b.verifiedAt.localeCompare(a.verifiedAt));
   res.json(ListOpportunitiesResponse.parse(rows));
 });
 router.get("/opportunities/:id", async (req, res): Promise<void> => {
@@ -107,7 +139,7 @@ router.get("/opportunities/:id", async (req, res): Promise<void> => {
   res.json(GetOpportunityResponse.parse(row));
 });
 router.get("/dashboard", async (req, res): Promise<void> => {
-  const rows = (await list(who(req)!)).filter(currentlyOpen);
+  const rows = deduplicate((await list(who(req)!)).filter(currentlyOpen).filter(x => matchesLocation(x.location, "riyadh")));
   const applicationsRows = await db.select({ id: applications.id }).from(applications).where(eq(applications.userId, who(req)!));
   const today = Date.now();
   res.json(GetDashboardResponse.parse({

@@ -5,6 +5,7 @@
  * CareerFlow Riyadh API
  * OpenAPI spec version: 0.1.0
  */
+import type { OpportunityMajorMatch } from './opportunityMajorMatch';
 
 export interface Opportunity {
   id: number;
@@ -39,6 +40,8 @@ export interface Opportunity {
   isDemo: boolean;
   saved: boolean;
   matchScore: number;
+  majorMatch: OpportunityMajorMatch;
+  majorMatchReason: string;
   matchReasons: string[];
   gaps: string[];
   sourceCount: number;

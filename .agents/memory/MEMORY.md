@@ -1,2 +1,3 @@
 - [Boolean query parsing](boolean-query-parsing.md) — generated boolean coercion can treat the string "false" as true; normalize URL query values explicitly.
 - [Legacy CommonJS PDF parser loading](legacy-pdf-parser-loading.md) — importing older parsers as ESM can execute their bundled demo code; validate actual file extraction.
+- [Discovery source constraints](discovery-source-constraints.md) — Bing RSS reuse is restricted; official PIF access was blocked, so do not claim verified portfolio coverage.

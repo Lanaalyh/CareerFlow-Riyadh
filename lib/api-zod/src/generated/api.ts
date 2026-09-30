@@ -138,6 +138,8 @@ export const GetDashboardResponse = zod.object({
   "isDemo": zod.boolean(),
   "saved": zod.boolean(),
   "matchScore": zod.number().int(),
+  "majorMatch": zod.enum(['High', 'Medium', 'Low', 'Unclear']),
+  "majorMatchReason": zod.string(),
   "matchReasons": zod.array(zod.string()),
   "gaps": zod.array(zod.string()),
   "sourceCount": zod.number().int()
@@ -145,7 +147,13 @@ export const GetDashboardResponse = zod.object({
 })
 
 
+export const listOpportunitiesQueryMajorMax = 120;
+
+
+
 export const ListOpportunitiesQueryParams = zod.object({
+  "major": zod.coerce.string().max(listOpportunitiesQueryMajorMax).optional(),
+  "location": zod.enum(['riyadh', 'remote-saudi', 'other-saudi', 'all-saudi']).optional(),
   "q": zod.coerce.string().optional(),
   "type": zod.coerce.string().optional(),
   "source": zod.coerce.string().optional(),
@@ -181,6 +189,8 @@ export const ListOpportunitiesResponseItem = zod.object({
   "isDemo": zod.boolean(),
   "saved": zod.boolean(),
   "matchScore": zod.number().int(),
+  "majorMatch": zod.enum(['High', 'Medium', 'Low', 'Unclear']),
+  "majorMatchReason": zod.string(),
   "matchReasons": zod.array(zod.string()),
   "gaps": zod.array(zod.string()),
   "sourceCount": zod.number().int()
@@ -220,6 +230,8 @@ export const GetOpportunityResponse = zod.object({
   "isDemo": zod.boolean(),
   "saved": zod.boolean(),
   "matchScore": zod.number().int(),
+  "majorMatch": zod.enum(['High', 'Medium', 'Low', 'Unclear']),
+  "majorMatchReason": zod.string(),
   "matchReasons": zod.array(zod.string()),
   "gaps": zod.array(zod.string()),
   "sourceCount": zod.number().int()
@@ -262,6 +274,8 @@ export const ListSavedResponseItem = zod.object({
   "isDemo": zod.boolean(),
   "saved": zod.boolean(),
   "matchScore": zod.number().int(),
+  "majorMatch": zod.enum(['High', 'Medium', 'Low', 'Unclear']),
+  "majorMatchReason": zod.string(),
   "matchReasons": zod.array(zod.string()),
   "gaps": zod.array(zod.string()),
   "sourceCount": zod.number().int()

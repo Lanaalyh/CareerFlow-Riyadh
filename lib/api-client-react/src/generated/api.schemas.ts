@@ -56,6 +56,16 @@ export type Profile = ProfileInput & {
   notificationsEnabled: boolean;
 };
 
+export type OpportunityMajorMatch = typeof OpportunityMajorMatch[keyof typeof OpportunityMajorMatch];
+
+
+export const OpportunityMajorMatch = {
+  High: 'High',
+  Medium: 'Medium',
+  Low: 'Low',
+  Unclear: 'Unclear',
+} as const;
+
 export interface Opportunity {
   id: number;
   company: string;
@@ -89,6 +99,8 @@ export interface Opportunity {
   isDemo: boolean;
   saved: boolean;
   matchScore: number;
+  majorMatch: OpportunityMajorMatch;
+  majorMatchReason: string;
   matchReasons: string[];
   gaps: string[];
   sourceCount: number;
@@ -216,10 +228,25 @@ export interface UploadTarget {
 }
 
 export type ListOpportunitiesParams = {
+/**
+ * @maxLength 120
+ */
+major?: string;
+location?: ListOpportunitiesLocation;
 q?: string;
 type?: string;
 source?: string;
 training?: boolean;
 sort?: string;
 };
+
+export type ListOpportunitiesLocation = typeof ListOpportunitiesLocation[keyof typeof ListOpportunitiesLocation];
+
+
+export const ListOpportunitiesLocation = {
+  riyadh: 'riyadh',
+  'remote-saudi': 'remote-saudi',
+  'other-saudi': 'other-saudi',
+  'all-saudi': 'all-saudi',
+} as const;
 

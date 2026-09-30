@@ -63,6 +63,12 @@ paths:
       operationId: listOpportunities
       tags: [careerflow]
       parameters:
+        - name: major
+          in: query
+          schema: { type: string, maxLength: 120 }
+        - name: location
+          in: query
+          schema: { type: string, enum: [riyadh, remote-saudi, other-saudi, all-saudi] }
         - name: q
           in: query
           schema: { type: string }
@@ -80,7 +86,7 @@ paths:
           schema: { type: string }
       responses:
         "200":
-          description: Riyadh-only opportunities
+          description: Verified active student opportunities matching the selected location
           content:
             application/json:
               schema:
@@ -381,7 +387,7 @@ components:
             notificationsEnabled: { type: boolean }
     Opportunity:
       type: object
-      required: [id, company, title, type, location, description, requirements, skills, source, originalUrl, status, discoveredAt, verifiedAt, isTraining, isDemo, saved, matchScore, matchReasons, gaps, sourceCount]
+      required: [id, company, title, type, location, description, requirements, skills, source, originalUrl, status, discoveredAt, verifiedAt, isTraining, isDemo, saved, matchScore, matchReasons, gaps, sourceCount, majorMatch, majorMatchReason]
       properties:
         id: { type: integer }
         company: { type: string }
@@ -410,6 +416,8 @@ components:
         isDemo: { type: boolean }
         saved: { type: boolean }
         matchScore: { type: integer }
+        majorMatch: { type: string, enum: [High, Medium, Low, Unclear] }
+        majorMatchReason: { type: string }
         matchReasons: { type: array, items: { type: string } }
         gaps: { type: array, items: { type: string } }
         sourceCount: { type: integer }

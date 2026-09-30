@@ -25,6 +25,6 @@ app.listen(port, (err) => {
   logger.info({ port }, "Server listening");
   void refreshSources().catch(err => logger.error({ err }, "Opportunity refresh failed"));
   setInterval(() => {
-    void refreshSources().catch(err => logger.error({ err }, "Opportunity refresh failed"));
+    void refreshSources(true).catch(err => logger.error({ err }, "Opportunity refresh failed"));
   }, 6 * 60 * 60 * 1000).unref();
 });
